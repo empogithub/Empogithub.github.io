@@ -1,0 +1,11 @@
+{
+  "name": "wobbychip.github.io",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "WobbyChip",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
