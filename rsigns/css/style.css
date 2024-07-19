@@ -1,0 +1,54 @@
+body {
+    margin: 0;
+    margin-left: 10px;
+}
+
+#body {
+    overflow: hidden;
+    user-select: none;
+}
+
+input[type="checkbox"] {
+    height: 48px;
+}
+
+label img {
+    margin-right: 10px;
+}
+
+#text {
+    margin-bottom: 0;
+}
+
+.subText {
+    margin-top: 5;
+    font-size: 12px;
+    margin-bottom: 10;
+}
+
+.allowSelect {
+    user-select: text;
+}
+
+#current {
+    display: inline;
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+#selected {
+    display: inline;
+    font-size: 14px;
+	width: 215px;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-bottom: 10px;
+}
+
+#amount {
+    display: inline;
+    font-size: 14px;
+	width: 215px;
+	margin-left: 5px;
+	margin-right: 5px;
+}
