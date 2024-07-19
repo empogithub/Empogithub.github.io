@@ -1,0 +1,137 @@
+﻿@font-face {
+    font-family: Uni_Sans_Heavy;
+    src: url(../fonts/Uni_Sans_Heavy.otf);
+}
+
+body {
+    user-select: none;
+    overflow: hidden;
+    font-family: Uni_Sans_Heavy;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.button {
+    position: fixed;
+    background-color: #008CBA;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    top: 320px;
+    left: 120px;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.button[disabled] {
+    position: fixed;
+    background-color: #CCCCCC;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    top: 320px;
+    left: 120px;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+#playerLeft {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 500px;
+    height: 138px;
+}
+
+#playerRight {
+    position: fixed;
+    top: 148px;
+    left: 0px;
+    width: 500px;
+    height: 138px;
+}
+
+#coverLeft {
+    position: fixed;
+    top: 7px;
+    left: 5px;
+    width: 128px;
+    height: 128px;
+    outline: 1.5px solid black;
+}
+
+#coverRight {
+    position: fixed;
+    top: 155px;
+    left: 367px;
+    width: 128px;
+    height: 128px;
+    outline: 1.5px solid black;
+}
+
+#songLeft {
+    position: fixed;
+    display: inline-block;
+    font-size: 28px;
+    color: white;
+    top: 30px;
+    left: 144px;
+    width: 350px;
+    height: auto;
+    -webkit-text-fill-color: white;
+    -webkit-text-stroke-width: 1.5px;
+    -webkit-text-stroke-color: black;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#songRight {
+    position: fixed;
+    display: inline-block;
+    font-size: 28px;
+    color: white;
+    top: 176px;
+    left: 5px;
+    width: 350px;
+    height: auto;
+    text-align: right;
+    -webkit-text-fill-color: white;
+    -webkit-text-stroke-width: 1.5px;
+    -webkit-text-stroke-color: black;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#artistLeft {
+    position: fixed;
+    display: inline-block;
+    font-size: 20px;
+    color: white;
+    top: 80px;
+    left: 144px;
+    width: 350px;
+    height: auto;
+    -webkit-text-fill-color: white;
+    -webkit-text-stroke-width: 1.2px;
+    -webkit-text-stroke-color: black;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#artistRight {
+    position: fixed;
+    display: inline-block;
+    font-size: 20px;
+    color: white;
+    top: 228px;
+    left: 5px;
+    width: 350px;
+    height: auto;
+    text-align: right;
+    -webkit-text-fill-color: white;
+    -webkit-text-stroke-width: 1.2px;
+    -webkit-text-stroke-color: black;
+    overflow: hidden;
+    white-space: nowrap;
+}
