@@ -7,17 +7,12 @@ var navigationItems = [
     {
         name: "Hodinium",
         href: "https://github.com/empogithub/Hodinium",
-        icon: "fas fa-music",
+        icon: "fas fa-paw",
     },
     {
         name: "nodel",
         href: "https://github.com/empogithub/nodel",
-        icon: "fas fa-volume-up",
-    },
-    {
-        name: "comming soon",
-        href: "empogithub.github.io/home",
-        icon: "fas fa-trash-alt",
+        icon: "fas fa-paw",
     },
     {
         name: "comming soon",
@@ -27,22 +22,27 @@ var navigationItems = [
     {
         name: "comming soon",
         href: "empogithub.github.io/home",
-        icon: "fab fa-windows",
+        icon: "fas fa-cogs",
     },
     {
         name: "comming soon",
         href: "empogithub.github.io/home",
-        icon: "fas fa-dice-d6",
+        icon: "fas fa-cogs",
     },
     {
         name: "comming soon",
         href: "empogithub.github.io/home",
-        icon: "fas fa-dice-d6",
+        icon: "fas fa-cogs",
     },
     {
         name: "comming soon",
         href: "empogithub.github.io/home",
-        icon: "fas fa-paw",
+        icon: "fas fa-cogs",
+    },
+    {
+        name: "comming soon",
+        href: "empogithub.github.io/home",
+        icon: "fas fa-cogs",
     },
 ]
 
