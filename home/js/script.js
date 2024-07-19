@@ -7,12 +7,12 @@ var navigationItems = [
     {
         name: "Hodinium",
         href: "https://github.com/empogithub/Hodinium",
-        icon: "fas fa-paw",
+        icon: "fa-solid fa-circle-xmark",
     },
     {
         name: "nodel",
         href: "https://github.com/empogithub/nodel",
-        icon: "fas fa-paw",
+        icon: "fa-solid fa-square-virus",
     },
     {
         name: "comming soon",
