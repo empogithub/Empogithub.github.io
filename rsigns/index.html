@@ -1,0 +1,38 @@
+<html lang="en" crosspilot="">
+<head>
+  <title>Road Signs Quiz</title>
+  <link href="css/style.css" rel="stylesheet">
+</head>
+
+<div id="body">
+  <h1 class="allowSelect" id="text"></h1>
+  <h1 class="allowSelect subText" id="type"></h1>
+  <h1 class="allowSelect subText" id="description"></h1>
+
+  <br>
+  <br>
+
+  <button type="button" id="submit">Submit</button>
+  <button type="button" id="random">Random</button>
+  <button type="button" id="previous">Previous</button>
+  <button type="button" id="next">Next</button>
+  <h1 id="current"></h1>
+
+  <br>
+  <br>
+
+  Selected Signs:
+  <input id="selected" placeholder="[1, 2, 3]">
+  <button type="button" id="select">Select</button>
+
+  <br>
+ 
+  Select Amount:
+  <input id="amount" placeholder="10">
+  <button type="button" id="amount-button">Select</button>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="js/signs.js"></script>
+<script src="js/script.js"></script>
+</html>
