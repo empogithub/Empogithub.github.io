@@ -16,7 +16,7 @@ var navigationItems = [
     },
     {
         name: "webit",
-        href: "empogithub.github.io/webit",
+        href: "https://webitdownload.sourceforge.io/",
         icon: "fa-solid fa-file",
     },
     {
