@@ -15,9 +15,9 @@ var navigationItems = [
         icon: "fa-solid fa-square-virus",
     },
     {
-        name: "comming soon",
-        href: "empogithub.github.io/home",
-        icon: "fas fa-cogs",
+        name: "webit",
+        href: "empogithub.github.io/webit",
+        icon: "fa-solid fa-file",
     },
     {
         name: "comming soon",
