@@ -20,28 +20,28 @@ var navigationItems = [
         icon: "fa-solid fa-file",
     },
     {
-        name: "comming soon",
-        href: "empogithub.github.io/home",
+        name: "Keygen98",
+        href: "https://github.com/empogithub/Keygen98",
         icon: "fas fa-cogs",
     },
     {
         name: "comming soon",
-        href: "empogithub.github.io/home",
+        href: "/home",
         icon: "fas fa-cogs",
     },
     {
         name: "comming soon",
-        href: "empogithub.github.io/home",
+        href: "/home",
         icon: "fas fa-cogs",
     },
     {
         name: "comming soon",
-        href: "empogithub.github.io/home",
+        href: "/home",
         icon: "fas fa-cogs",
     },
     {
         name: "comming soon",
-        href: "empogithub.github.io/home",
+        href: "/home",
         icon: "fas fa-cogs",
     },
 ]
