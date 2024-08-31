@@ -20,9 +20,9 @@ var navigationItems = [
         icon: "fa-solid fa-file",
     },
     {
-        name: "Keygen98",
-        href: "https://github.com/empogithub/Keygen98",
-        icon: "fa-solid fa-key",
+        name: "Keygen98 down !!",
+        href: "/home",
+        icon: "fas fa-cogs",
     },
     {
         name: "comming soon",
