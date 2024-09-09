@@ -22,7 +22,7 @@ var navigationItems = [
     {
         name: "Keygen98",
         href: "https://github.com/empogithub/Keygen98",
-        icon: "https://github.com/empogithub",
+        icon: "fa-solid fa-key",
     },
     {
         name: "comming soon",
