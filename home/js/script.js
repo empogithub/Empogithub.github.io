@@ -25,9 +25,9 @@ var navigationItems = [
         icon: "fa-solid fa-key",
     },
     {
-        name: "comming soon",
-        href: "/home",
-        icon: "fas fa-cogs",
+        name: "666devil",
+        href: "https://github.com/empogithub/666devil",
+        icon: "fa-solid fa-book-skull",
     },
     {
         name: "comming soon",
