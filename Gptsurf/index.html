@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<title>Surfspel (mobil)</title>
+<style>
+html,body {
+  height:100%; margin:0;
+  background: linear-gradient(#87ceeb,#1e90ff);
+  -webkit-user-select:none; user-select:none;
+  touch-action: none;
+}
+#gameWrap {
+  position:relative; width:100%; height:100vh; overflow:hidden;
+  display:flex; align-items:flex-end; justify-content:center;
+}
+canvas { display:block; width:100%; height:100%; max-width:900px; max-height:1600px; }
+
+.ui {
+  position:absolute; left:12px; top:12px; color:#fff;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto; font-weight:600;
+  text-shadow:0 1px 2px rgba(0,0,0,0.4);
+}
+.ui .score { font-size:18px; margin-bottom:6px; }
+.ui .hint { font-size:13px; opacity:0.9; }
+
+.btn {
+  background:rgba(255,255,255,0.15); padding:8px 12px; border-radius:10px;
+  color:#fff; font-weight:700; border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(6px);
+  touch-action: manipulation;
+}
+.small { font-size:13px; }
+#pauseBtn { position:absolute; right:12px; top:12px; }
+
+.overlay {
+  position:absolute; inset:0;
+  background:rgba(0,0,0,0.4);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto; color:#fff;
+  text-align:center; padding:20px;
+}
+.overlay h1 { margin:0 0 10px 0; font-size:32px; }
+.overlay p { font-size:16px; margin:4px 0; }
+.overlay button {
+  margin-top:16px;
+  padding:10px 20px;
+  border:none; border-radius:8px;
+  font-size:16px; font-weight:700;
+  background:#ff9800; color:#fff;
+}
+</style>
+</head>
+<body>
+<div id="gameWrap">
+  <canvas id="game"></canvas>
+
+  <div class="ui">
+    <div class="score">Poäng: <span id="score">0</span></div>
+    <div class="hint small">Tryck för hoppa • Svep ner för dyk</div>
+  </div>
+  <button id="pauseBtn" class="btn small">Pausa</button>
+
+  <!-- Startskärm -->
+  <div id="startScreen" class="overlay">
+    <h1>Surfspel</h1>
+    <p>Hoppa över hinder och samla poäng!</p>
+    <p>Tryck för att hoppa, svep ner för att dyka.</p>
+    <button id="startBtn">Starta spelet</button>
+  </div>
+
+  <!-- Game-over-skärm -->
+  <div id="gameOverScreen" class="overlay" style="display:none">
+    <h1>Game Over</h1>
+    <p id="finalScore">Poäng: 0</p>
+    <button id="retryBtn">Spela igen</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  let W = 900, H = 1600, scale = 1;
+
+  function resize() {
+    const pw = canvas.parentElement.clientWidth;
+    const ph = canvas.parentElement.clientHeight;
+    scale = Math.min(pw/W, ph/H);
+    canvas.width = W*scale;
+    canvas.height = H*scale;
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // Game state
+  let running = false, paused = false, score = 0;
+  let gravity = 1800, lastTime = 0, speed = 420;
+  let obstacleTimer = 0, bgTimer = 0;
+
+  const player = { x: 140, y: H-300, w: 120, h: 60, vy: 0, onGround:true, jumping:false, isDiving:false, diveCooldown:0 };
+  const obstacles = [];
+  const pickups = [];
+
+  const startScreen = document.getElementById('startScreen');
+  const gameOverScreen = document.getElementById('gameOverScreen');
+  const finalScoreEl = document.getElementById('finalScore');
+
+  function resetGame() {
+    score = 0;
+    obstacles.length = 0;
+    pickups.length = 0;
+    player.y = H - 300;
+    player.vy = 0;
+    player.onGround = true;
+    player.isDiving = false;
+    speed = 420;
+    obstacleTimer = 0;
+    bgTimer = 0;
+    lastTime = performance.now();
+    updateScore();
+  }
+
+  function rand(min,max){ return Math.random()*(max-min)+min; }
+  function spawnObstacle() {
+    const h = rand(60, 180);
+    obstacles.push({ x: W+80, y: H-260-(h-60), w: rand(40, 120), h, passed:false });
+  }
+  function spawnPickup() {
+    pickups.push({ x: W+80, y: rand(H-420,H-320), size:44, taken:false });
+  }
+  function rectsOverlap(a,b){
+    return !(a.x+a.w<b.x || b.x+b.w<a.x || a.y+a.h<b.y || b.y+b.h<a.y);
+  }
+
+  function startJump() {
+    if (player.onGround && !player.isDiving) {
+      player.vy = -820;
+      player.onGround = false;
+      player.jumping = true;
+    }
+  }
+  function startDive() {
+    if (!player.isDiving && !player.onGround) {
+      player.isDiving = true;
+      player.vy = 1100;
+      player.diveCooldown = 0.4;
+    }
+  }
+
+  canvas.addEventListener('pointerdown', () => {
+    if (!running) return;
+    startJump();
+  });
+  canvas.addEventListener('pointermove', e => {
+    if (e.movementY > 10) startDive();
+  });
+
+  document.getElementById('pauseBtn').onclick = () => {
+    if (!running) return;
+    paused = !paused;
+    if (!paused) { lastTime = performance.now(); requestAnimationFrame(loop); }
+  };
+  document.getElementById('startBtn').onclick = () => {
+    startScreen.style.display = 'none';
+    running = true;
+    resetGame();
+    requestAnimationFrame(loop);
+  };
+  document.getElementById('retryBtn').onclick = () => {
+    gameOverScreen.style.display = 'none';
+    running = true;
+    resetGame();
+    requestAnimationFrame(loop);
+  };
+
+  function updateScore() {
+    document.getElementById('score').textContent = Math.floor(score);
+  }
+
+  function loop(t) {
+    if (!running) return;
+    if (paused) return;
+    const dt = Math.min((t-lastTime)/1000, 0.04);
+    lastTime = t;
+
+    speed += dt * 2.5;
+    obstacleTimer -= dt;
+    if (obstacleTimer<=0) { spawnObstacle(); obstacleTimer = rand(0.9,1.6); }
+    if (Math.random()<0.02) spawnPickup();
+
+    if (!player.onGround) {
+      player.vy += gravity*dt;
+      player.y += player.vy*dt;
+    }
+    if (player.isDiving) {
+      player.diveCooldown -= dt;
+      if (player.diveCooldown <= 0) player.isDiving = false;
+    }
+    const groundY = H - 240 - (player.h-60);
+    if (player.y >= groundY) { player.y = groundY; player.vy = 0; player.onGround = true; }
+    else player.onGround = false;
+
+    for (let i=obstacles.length-1;i>=0;i--) {
+      const o = obstacles[i];
+      o.x -= speed*dt;
+      if (o.x+o.w < -40) obstacles.splice(i,1);
+      else {
+        if (rectsOverlap({x:player.x,y:player.y,w:player.w,h:player.h},{x:o.x,y:o.y,w:o.w,h:o.h})) {
+          running = false;
+          finalScoreEl.textContent = "Poäng: " + score;
+          gameOverScreen.style.display = 'flex';
+          return;
+        }
+        if (!o.passed && o.x+o.w<player.x) { o.passed = true; score += 10; updateScore(); }
+      }
+    }
+    for (let i=pickups.length-1;i>=0;i--) {
+      const p = pickups[i];
+      p.x -= speed*dt;
+      if (p.x+p.size < -40) pickups.splice(i,1);
+      else if (rectsOverlap({x:player.x,y:player.y,w:player.w,h:player.h},{x:p.x,y:p.y,w:p.size,h:p.size})) {
+        score += 25; updateScore(); pickups.splice(i,1);
+      }
+    }
+    bgTimer += dt*0.6;
+
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    const seaTop = H-240;
+    ctx.fillStyle = '#0b66b3';
+    ctx.fillRect(0,seaTop,W,H-seaTop);
+    ctx.beginPath();
+    ctx.fillStyle = '#ffeb3b';
+    ctx.fillRect(player.x, player.y, player.w, player.h);
+
+    ctx.fillStyle = '#5a3b2e';
+    for (const o of obstacles) ctx.fillRect(o.x,o.y,o.w,o.h);
+    ctx.fillStyle = 'gold';
+    for (const p of pickups) ctx.fillRect(p.x,p.y,p.size,p.size);
+  }
+})();
+</script>
+</body>
+</html>
