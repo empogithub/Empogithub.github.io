@@ -1,0 +1,20 @@
+{
+  "name": "Surf Game Deluxe",
+  "short_name": "Surf Game",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#2980b9",
+  "theme_color": "#2980b9",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
