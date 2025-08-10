@@ -31,7 +31,7 @@ var navigationItems = [
     },
     {
         name: "gpt-surf",
-        href: "/gptsurf",
+        href: "/Gptsurf",
         icon: "fa-solid fa-gamepad",
     },
     {
