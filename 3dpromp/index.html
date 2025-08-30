@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <title>3dpromp</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #009879; /* grön bakgrund */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 900px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .header {
+      background: white;
+      padding: 20px;
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-around;
+      margin: 30px 0;
+    }
+
+    .box {
+      background: white;
+      padding: 30px;
+      flex: 1;
+      margin: 0 10px;
+      font-size: 1.2rem;
+    }
+
+    .footer {
+      background: white;
+      padding: 40px 20px;
+      font-size: 2rem;
+    }
+
+    .status-btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      background: #009879;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">Välkommen till 3dpromp!</div>
+
+    <div class="row">
+      <div class="box">
+        Tid: <span id="time">*Aktuell tid i Sverige*</span>
+      </div>
+      <div class="box">
+        Musik <br>
+        <iframe src="https://www.radioplayer.se/embed/player/rixfm" width="250" height="100" frameborder="0"></iframe>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div>Kassan är just nu <span id="status-text">Stängd</span></div>
+      <button class="status-btn" onclick="toggleStatus()">Byt status</button>
+    </div>
+  </div>
+
+  <script>
+    function updateTime() {
+      const options = { timeZone: 'Europe/Stockholm', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+      const now = new Date().toLocaleTimeString('sv-SE', options);
+      document.getElementById('time').textContent = now;
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    function toggleStatus() {
+      const text = document.getElementById("status-text");
+      if (text.textContent === "Stängd") {
+        text.textContent = "Öppen";
+      } else {
+        text.textContent = "Stängd";
+      }
+    }
+  </script>
+</body>
+</html>
