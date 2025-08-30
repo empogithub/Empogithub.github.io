@@ -38,7 +38,14 @@
       padding: 30px;
       flex: 1;
       margin: 0 10px;
-      font-size: 1.2rem;
+      font-size: 1.4rem;
+    }
+
+    #time {
+      font-size: 2rem;
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
     }
 
     .footer {
@@ -50,12 +57,17 @@
     .status-btn {
       margin-top: 10px;
       padding: 10px 20px;
-      font-size: 1rem;
+      font-size: 1.2rem;
       cursor: pointer;
-      background: #009879;
-      color: white;
-      border: none;
-      border-radius: 5px;
+      background: transparent;     /* genomskinlig */
+      color: black;
+      border: 2px solid black;
+      border-radius: 8px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .status-btn:hover {
+      background: rgba(0,0,0,0.1); /* lite highlight vid hover */
     }
   </style>
 </head>
@@ -65,11 +77,18 @@
 
     <div class="row">
       <div class="box">
-        Tid: <span id="time">*Aktuell tid i Sverige*</span>
+        Tid:
+        <span id="time">*Aktuell tid i Sverige*</span>
       </div>
       <div class="box">
-        Musik <br>
-        <iframe src="https://www.radioplayer.se/embed/player/rixfm" width="250" height="100" frameborder="0"></iframe>
+        Musik <br><br>
+        <!-- HTML5 audio spelare med RixFM live stream -->
+        <audio controls>
+          <source src="https://live-bauerse-fm.sharp-stream.com/rixfm_instream_se_mp3" type="audio/mpeg">
+          Din webbläsare stödjer inte ljuduppspelning.
+        </audio>
+        <br>
+        <a href="https://www.rixfm.se/" target="_blank">Öppna RixFM</a>
       </div>
     </div>
 
