@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flappy Bird Standalone with AdSense</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; }
+  canvas { display: block; width: 100vw; height: 100vh; }
+  #rewardBtn { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 16px 24px; font-size: 18px; font-weight: bold; background: #ffd54d; border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 6px 16px rgba(0,0,0,0.35); display: none; z-index:10; }
+</style>
+<!-- Google AdSense -->
+<script data-ad-client="ca-pub-5821644364550005" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+<button id="rewardBtn">▶ Watch Ad to Continue</button>
+<script>
+(function(){
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const rewardBtn = document.getElementById('rewardBtn');
+  let width = window.innerWidth, height = window.innerHeight;
+  canvas.width = width * devicePixelRatio;
+  canvas.height = height * devicePixelRatio;
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+
+  let state = { running:false, started:false, gameOver:false, score:0, highScore:Number(localStorage.getItem('flappy_high')||0) };
+  let bird = { x: width*0.18, y: height*0.35, radius:14, vy:0, gravity:1100, flap:-320, maxFall:650 };
+  let pipes = { list:[], spacing:220, pipeW:64, gapMin:140, gapMax:220, speed:160 };
+  const groundH = 96;
+
+  function resetGame(){
+    state.running=false; state.started=false; state.gameOver=false; state.score=0;
+    bird.x = width*0.18; bird.y = height*0.35; bird.vy=0;
+    pipes.list=[];
+    rewardBtn.style.display='none';
+  }
+
+  function spawnPipe(){
+    const gapH = Math.floor(Math.random()*(pipes.gapMax - pipes.gapMin +1))+pipes.gapMin;
+    const gapY = Math.floor(Math.random()*(height - groundH - 80*2 - gapH)) + 80;
+    pipes.list.push({x:width+40, gapY, gapH, scored:false});
+  }
+
+  function update(dt){
+    if(!state.started || state.gameOver) return;
+    bird.vy += bird.gravity*dt;
+    if(bird.vy>bird.maxFall) bird.vy=bird.maxFall;
+    bird.y += bird.vy*dt;
+
+    pipes.list.forEach(p=>p.x -= pipes.speed*dt);
+    while(pipes.list.length && pipes.list[0].x + pipes.pipeW < -50) pipes.list.shift();
+    if(pipes.list.length===0 || pipes.list[pipes.list.length-1].x < width - pipes.spacing) spawnPipe();
+
+    for(let p of pipes.list){
+      if(!p.scored && p.x+pipes.pipeW < bird.x - bird.radius){ p.scored=true; state.score++; if(state.score>state.highScore){ state.highScore=state.score; localStorage.setItem('flappy_high', state.highScore); } }
+      if(bird.x+bird.radius>p.x && bird.x-bird.radius<p.x+pipes.pipeW){
+        if(bird.y-bird.radius < p.gapY || bird.y+bird.radius>p.gapY+p.gapH) gameOver();
+      }
+    }
+
+    if(bird.y+bird.radius>height-groundH){ bird.y=height-groundH-bird.radius; gameOver(); }
+    if(bird.y-bird.radius<0){ bird.y=bird.radius; bird.vy=0; }
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,width,height);
+    const g = ctx.createLinearGradient(0,0,0,height); g.addColorStop(0,'#80d0ff'); g.addColorStop(1,'#bfe9ff'); ctx.fillStyle=g; ctx.fillRect(0,0,width,height);
+    pipes.list.forEach(drawPipe);
+    ctx.fillStyle='#deaa56'; ctx.fillRect(0,height-groundH,width,groundH);
+    drawBird();
+    ctx.font='bold 36px Arial'; ctx.textAlign='center'; ctx.fillStyle='white'; ctx.lineWidth=6; ctx.strokeStyle='rgba(0,0,0,0.35)'; ctx.strokeText(state.score,width/2,72); ctx.fillText(state.score,width/2,72);
+  }
+
+  function drawBird(){ ctx.save(); ctx.translate(bird.x,bird.y); const tilt=Math.max(-0.8,Math.min(0.8,bird.vy/400)); ctx.rotate(tilt); ctx.beginPath(); ctx.fillStyle='#ffdd57'; ctx.arc(0,0,bird.radius,0,Math.PI*2); ctx.fill(); ctx.closePath(); ctx.beginPath(); ctx.fillStyle='#333'; ctx.arc(4,-4,3.4,0,Math.PI*2); ctx.fill(); ctx.closePath(); ctx.beginPath(); ctx.fillStyle='#ff7a00'; ctx.moveTo(bird.radius-2,0); ctx.lineTo(bird.radius+8,-4); ctx.lineTo(bird.radius+8,6); ctx.closePath(); ctx.fill(); ctx.restore(); }
+  function drawPipe(p){ const w=pipes.pipeW; ctx.fillStyle='#2e8b57'; ctx.fillRect(p.x,0,w,p.gapY); ctx.fillRect(p.x,p.gapY+p.gapH,w,height-(p.gapY+p.gapH)-groundH); ctx.fillStyle='#25684a'; ctx.fillRect(p.x-6,p.gapY-18,w+12,12); ctx.fillRect(p.x-6,p.gapY+p.gapH+6,w+12,12); ctx.fillStyle='rgba(0,0,0,0.09)'; ctx.fillRect(p.x,0,10,p.gapY); }
+
+  function flap(){ if(state.gameOver){ resetGame(); return; } if(!state.started){ state.started=true; state.running=true; } bird.vy=bird.flap; }
+
+  function gameOver(){ state.gameOver=true; state.running=false; rewardBtn.style.display='block';
+    // Show Google AdSense auto ad as fallback
+    if(window.adsbygoogle){
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    }
+  }
+
+  function resurrect(){ state.gameOver=false; state.running=true; rewardBtn.style.display='none'; bird.y=height/3; bird.vy=0; }
+
+  rewardBtn.addEventListener('click', ()=>{ resurrect(); });
+
+  window.addEventListener('keydown', e=>{ if(e.code==='Space') flap(); });
+  window.addEventListener('click', flap);
+
+  let lastTime = performance.now();
+  function loop(now){ const dt=Math.min((now-lastTime)/1000,1/30); lastTime=now; update(dt); draw(); requestAnimationFrame(loop); }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
