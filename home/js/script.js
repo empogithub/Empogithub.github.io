@@ -30,8 +30,8 @@ var navigationItems = [
         icon: "fa-solid fa-book-skull",
     },
     {
-        name: "gpt-surf",
-        href: "/Gptsurf",
+        name: "Flappy bird",
+        href: "/Flappybird",
         icon: "fa-solid fa-gamepad",
     },
     {
