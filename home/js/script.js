@@ -35,9 +35,9 @@ var navigationItems = [
         icon: "fa-solid fa-gamepad",
     },
     {
-        name: "comming soon",
-        href: "/home",
-        icon: "fas fa-cogs",
+        name: "hypixel rank troll",
+        href: "https://hypixelnerd.lovable.app/",
+        icon: "fa-solid fa-h",
     },
     {
         name: "comming soon",
