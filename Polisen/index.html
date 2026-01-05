@@ -3,111 +3,200 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polishändelser</title>
 
-<title>Polishändelser – Karta</title>
-
-<!-- Leaflet (karta) -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <!-- Cloudflare Turnstile -->
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: white;
-        color: #000;
-    }
+/* ====== BLÅTT TEMA ====== */
+:root {
+    --blue-main: #0b4edb;
+    --blue-light: #e8f0ff;
+    --blue-dark: #083a9b;
+}
 
-    header {
-        padding: 15px;
-        text-align: center;
-        font-size: 1.3em;
-        font-weight: bold;
-        border-bottom: 1px solid #ddd;
-    }
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #ffffff;
+    color: #0f172a;
+}
 
+/* ====== HEADER ====== */
+header {
+    padding: 14px;
+    font-size: 1.2em;
+    font-weight: 600;
+    background: var(--blue-main);
+    color: white;
+}
+
+/* ====== MAP ====== */
+#map {
+    height: 45vh;
+    width: 100%;
+}
+
+/* ====== TABLE ====== */
+.table-wrapper {
+    padding: 10px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+th {
+    background: var(--blue-light);
+    color: var(--blue-dark);
+    padding: 10px;
+    text-align: left;
+    border-bottom: 2px solid #c7d7ff;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+tr:hover {
+    background: #f0f6ff;
+    cursor: pointer;
+}
+
+.place {
+    color: var(--blue-main);
+    font-weight: 500;
+    text-decoration: underline;
+}
+
+/* ====== TURNSTILE OVERLAY ====== */
+#verifyOverlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #0b4edb, #0a3fa8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.verify-box {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.verify-box h2 {
+    margin-top: 0;
+    color: var(--blue-main);
+}
+
+/* Mobil */
+@media (max-width: 600px) {
     #map {
-        height: 80vh;
-        width: 100%;
+        height: 40vh;
     }
-
-    .verify-box {
-        padding: 15px;
-        text-align: center;
-        border-bottom: 1px solid #ddd;
-    }
-
-    @media (max-width: 600px) {
-        header {
-            font-size: 1.1em;
-        }
-    }
+}
 </style>
 </head>
 
 <body>
 
-<header>🚓 Polishändelser – Live karta</header>
+<!-- 🔐 TURNSTILE OVERLAY -->
+<div id="verifyOverlay">
+    <div class="verify-box">
+        <h2>Verifierar besökare</h2>
+        <p>Vänligen vänta…</p>
 
-<!-- Cloudflare verifiering -->
-<div class="verify-box">
-    <div class="cf-turnstile"
-         data-sitekey="0x4AAAAAACKmybsgBUX-U7HE"
-         data-callback="onVerified">
+        <div class="cf-turnstile"
+             data-sitekey="0x4AAAAAACKmybsgBUX-U7HE"
+             data-callback="onVerified">
+        </div>
     </div>
 </div>
 
+<header>🚓 Polishändelser – Sverige</header>
+
 <div id="map"></div>
 
-<!-- Leaflet JS -->
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Typ</th>
+                <th>Plats</th>
+                <th>Tid</th>
+                <th>Sammanfattning</th>
+            </tr>
+        </thead>
+        <tbody id="eventTable"></tbody>
+    </table>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 let map;
-let verified = false;
 
 function onVerified() {
-    verified = true;
+    document.getElementById("verifyOverlay").style.display = "none";
     initMap();
     loadEvents();
 }
 
 function initMap() {
-    map = L.map('map').setView([59.3293, 18.0686], 6); // Sverige
+    map = L.map("map").setView([59.3293, 18.0686], 6);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 18,
-        attribution: '© OpenStreetMap'
+        attribution: "© OpenStreetMap"
     }).addTo(map);
 }
 
 async function loadEvents() {
-    if (!verified) return;
+    const table = document.getElementById("eventTable");
 
-    try {
-        const res = await fetch("https://polisen.se/api/events");
-        const data = await res.json();
+    const res = await fetch("https://polisen.se/api/events");
+    const data = await res.json();
 
-        data.forEach(event => {
-            if (!event.location || !event.location.gps) return;
+    data.forEach(event => {
+        if (!event.location?.gps) return;
 
-            const [lat, lon] = event.location.gps.split(",");
+        const [lat, lon] = event.location.gps.split(",");
 
-            L.marker([lat, lon]).addTo(map)
-                .bindPopup(`
-                    <strong>${event.type}</strong><br>
-                    📍 ${event.location.name}<br>
-                    🕒 ${event.datetime}<br><br>
-                    ${event.summary}
-                `);
-        });
+        const marker = L.marker([lat, lon]).addTo(map)
+            .bindPopup(`
+                <strong>${event.type}</strong><br>
+                📍 ${event.location.name}<br>
+                🕒 ${event.datetime}<br><br>
+                ${event.summary}
+            `);
 
-    } catch (e) {
-        alert("Kunde inte ladda polishändelser");
-        console.error(e);
-    }
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td><strong>${event.type}</strong></td>
+            <td class="place">${event.location.name}</td>
+            <td>${event.datetime}</td>
+            <td>${event.summary}</td>
+        `;
+
+        tr.onclick = () => {
+            map.setView([lat, lon], 14, { animate: true });
+            marker.openPopup();
+        };
+
+        table.appendChild(tr);
+    });
 }
 </script>
 
