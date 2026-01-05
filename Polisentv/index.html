@@ -22,21 +22,19 @@ body, html {
     height: 100vh;
 }
 
-/* Container */
 #tv-container {
     position: relative;
     width: 100%;
     height: 100%;
     overflow: hidden;
+    cursor: pointer;
 }
 
-/* Lista */
 #event-list {
     position: absolute;
     width: 100%;
 }
 
-/* Rad */
 .event {
     padding: 15px 20px;
     font-size: 2em;
@@ -45,7 +43,6 @@ body, html {
     background: var(--blue-main);
 }
 
-/* Popup för ny händelse */
 .fullscreen-event {
     position: absolute;
     top: 50%;
@@ -62,7 +59,6 @@ body, html {
     z-index: 1000;
 }
 
-/* Responsiv */
 @media (max-width: 800px) {
     .fullscreen-event {
         font-size: 1.8em;
@@ -83,15 +79,25 @@ body, html {
 const container = document.getElementById("event-list");
 const sound = document.getElementById("newSound");
 
-let events = [];
+let displayedIds = new Set();
 let scrollPos = 0;
+let soundEnabled = false;
 
-// Hämta polishändelser från API
+// Aktivera ljud på första klick
+document.getElementById("tv-container").addEventListener("click", () => {
+    if(!soundEnabled){
+        sound.play().catch(()=>{});
+        soundEnabled = true;
+        alert("Ljud aktiverat! Klicka nu inte behövs längre.");
+    }
+}, { once: true });
+
+// Hämta händelser
 async function fetchEvents() {
     try {
         const res = await fetch("https://polisen.se/api/events");
         const data = await res.json();
-        return data.slice(0, 30); // max 30 händelser
+        return data.slice(0, 30);
     } catch(e) {
         console.error("Kunde inte hämta händelser", e);
         return [];
@@ -99,46 +105,39 @@ async function fetchEvents() {
 }
 
 // Visa popup för ny händelse
-function showFullscreen(event) {
+function showFullscreen(event){
     const fs = document.createElement("div");
     fs.className = "fullscreen-event";
     fs.innerHTML = `<strong>${event.type}</strong><br>📍 ${event.location.name}<br>🕒 ${event.datetime}<br>${event.summary}`;
     document.body.appendChild(fs);
-
-    // Ljud
-    sound.currentTime = 0;
-    sound.play();
-
-    setTimeout(() => {
-        fs.remove();
-    }, 20000); // 20 sek
+    if(soundEnabled){
+        sound.currentTime = 0;
+        sound.play();
+    }
+    setTimeout(()=>fs.remove(), 20000);
 }
 
-// Uppdatera listan med nya händelser
-function updateList(newEvents) {
-    const existingIds = Array.from(container.children).map(e => e.dataset.id);
+// Lägg till ny händelse i tickern
+function addEventToTicker(event){
+    const eventId = event.id || event.datetime + event.location.name;
+    if(displayedIds.has(eventId)) return;
+    displayedIds.add(eventId);
 
-    newEvents.forEach(event => {
-        const eventId = event.id || event.datetime + event.location.name;
-        if(!existingIds.includes(eventId)) {
-            // Ny händelse → popup
-            showFullscreen(event);
+    // Popup för nya händelser
+    showFullscreen(event);
 
-            // Lägg till längst ner i ticker
-            const div = document.createElement("div");
-            div.className = "event";
-            div.dataset.id = eventId;
-            div.innerHTML = `<strong>${event.type}</strong> - ${event.location.name} - ${event.datetime}<br>${event.summary}`;
-            container.appendChild(div);
-        }
-    });
+    // Lägg till i ticker
+    const div = document.createElement("div");
+    div.className = "event";
+    div.dataset.id = eventId;
+    div.innerHTML = `<strong>${event.type}</strong> - ${event.location.name} - ${event.datetime}<br>${event.summary}`;
+    container.appendChild(div);
 }
 
 // Scroll-loop
-function startScrolling() {
-    const speed = 1; // px/frame
-
-    function step() {
+function startScrolling(){
+    const speed = 1;
+    function step(){
         scrollPos -= speed;
         const totalHeight = container.scrollHeight;
         if(scrollPos <= -totalHeight) scrollPos = container.parentElement.clientHeight;
@@ -147,9 +146,9 @@ function startScrolling() {
 
         // Ljud när rad når toppen
         const rows = document.querySelectorAll(".event");
-        rows.forEach(row => {
+        rows.forEach(row=>{
             const rect = row.getBoundingClientRect();
-            if(rect.top <= 10 && rect.top > -speed) {
+            if(rect.top <= 10 && rect.top > -speed && soundEnabled){
                 sound.currentTime = 0;
                 sound.play();
             }
@@ -157,33 +156,10 @@ function startScrolling() {
 
         requestAnimationFrame(step);
     }
-
     step();
 }
 
-// Starta live TV
-async function startLiveTV() {
+// Start TV
+async function startLiveTV(){
     const initialEvents = await fetchEvents();
-    initialEvents.forEach(event => {
-        const div = document.createElement("div");
-        div.className = "event";
-        div.dataset.id = event.id || event.datetime + event.location.name;
-        div.innerHTML = `<strong>${event.type}</strong> - ${event.location.name} - ${event.datetime}<br>${event.summary}`;
-        container.appendChild(div);
-    });
-
-    if(initialEvents[0]) showFullscreen(initialEvents[0]);
-    startScrolling();
-
-    // Auto-uppdatera varje 30 sek
-    setInterval(async () => {
-        const latestEvents = await fetchEvents();
-        updateList(latestEvents);
-    }, 30000);
-}
-
-startLiveTV();
-</script>
-
-</body>
-</html>
+    // Visa bara de
