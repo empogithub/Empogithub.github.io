@@ -79,7 +79,8 @@ body, html {
 const container = document.getElementById("event-list");
 const sound = document.getElementById("newSound");
 
-let displayedIds = new Set();
+let displayedIds = new Set(); // alla händelser i tickern
+let notifiedIds = new Set();  // vilka händelser som fått popup + ljud
 let scrollPos = 0;
 let soundEnabled = false;
 
@@ -88,11 +89,11 @@ document.getElementById("tv-container").addEventListener("click", () => {
     if(!soundEnabled){
         sound.play().catch(()=>{});
         soundEnabled = true;
-        alert("Ljud aktiverat! Klicka nu inte behövs längre.");
+        alert("Ljud aktiverat!");
     }
 }, { once: true });
 
-// Hämta händelser
+// Hämta händelser från API
 async function fetchEvents() {
     try {
         const res = await fetch("https://polisen.se/api/events");
@@ -104,8 +105,8 @@ async function fetchEvents() {
     }
 }
 
-// Visa popup för ny händelse
-function showFullscreen(event){
+// Visa popup för notis
+function showNotification(event){
     const fs = document.createElement("div");
     fs.className = "fullscreen-event";
     fs.innerHTML = `<strong>${event.type}</strong><br>📍 ${event.location.name}<br>🕒 ${event.datetime}<br>${event.summary}`;
@@ -114,19 +115,15 @@ function showFullscreen(event){
         sound.currentTime = 0;
         sound.play();
     }
-    setTimeout(()=>fs.remove(), 20000);
+    setTimeout(()=>fs.remove(),20000);
 }
 
 // Lägg till ny händelse i tickern
 function addEventToTicker(event){
     const eventId = event.id || event.datetime + event.location.name;
-    if(displayedIds.has(eventId)) return;
+    if(displayedIds.has(eventId)) return; // redan i tickern
     displayedIds.add(eventId);
 
-    // Popup för nya händelser
-    showFullscreen(event);
-
-    // Lägg till i ticker
     const div = document.createElement("div");
     div.className = "event";
     div.dataset.id = eventId;
@@ -144,13 +141,15 @@ function startScrolling(){
 
         container.style.transform = `translateY(${scrollPos}px)`;
 
-        // Ljud när rad når toppen
+        // Ljud vid toppen
         const rows = document.querySelectorAll(".event");
         rows.forEach(row=>{
             const rect = row.getBoundingClientRect();
-            if(rect.top <= 10 && rect.top > -speed && soundEnabled){
+            const rowId = row.dataset.id;
+            if(rect.top <= 10 && rect.top > -speed && soundEnabled && !notifiedIds.has(rowId)){
                 sound.currentTime = 0;
                 sound.play();
+                notifiedIds.add(rowId);
             }
         });
 
@@ -162,16 +161,11 @@ function startScrolling(){
 // Start TV
 async function startLiveTV(){
     const initialEvents = await fetchEvents();
-    // Visa bara de 2 senaste i tickern initialt
-    const initialToShow = initialEvents.slice(-2);
-    initialToShow.forEach(event=>{
-        const eventId = event.id || event.datetime + event.location.name;
-        displayedIds.add(eventId);
-        const div = document.createElement("div");
-        div.className = "event";
-        div.dataset.id = eventId;
-        div.innerHTML = `<strong>${event.type}</strong> - ${event.location.name} - ${event.datetime}<br>${event.summary}`;
-        container.appendChild(div);
+
+    // Lägg alla i tickern utan popup/ljud
+    initialEvents.forEach(event=>{
+        addEventToTicker(event);
+        displayedIds.add(event.id || event.datetime + event.location.name);
     });
 
     startScrolling();
@@ -179,8 +173,18 @@ async function startLiveTV(){
     // Kontrollera nya händelser var 30 sek
     setInterval(async ()=>{
         const latestEvents = await fetchEvents();
-        // Visa endast nya som inte redan finns
-        latestEvents.forEach(event=>addEventToTicker(event));
+        // Hämta de 2 nyaste som inte notifierats
+        const newNotices = latestEvents.filter(event=>{
+            const eventId = event.id || event.datetime + event.location.name;
+            return !notifiedIds.has(eventId);
+        }).slice(-2);
+
+        newNotices.forEach(event=>{
+            const eventId = event.id || event.datetime + event.location.name;
+            notifiedIds.add(eventId);
+            showNotification(event);
+            addEventToTicker(event);
+        });
     },30000);
 }
 
