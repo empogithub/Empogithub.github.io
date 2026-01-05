@@ -3,94 +3,117 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Polishändelser</title>
+<title>Polishändelser – Modern Blå Tabell</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
 :root {
-    --blue-main: #0b4edb;
-    --blue-soft: #eef4ff;
+    --blue-main: #0b4edb;       /* huvudblå */
+    --blue-soft: #eef4ff;       /* ljus blå */
+    --blue-hover: #c7dbff;      /* hover */
     --blue-border: #c7d7ff;
-    --blue-text: #0f172a;
+    --white: #ffffff;
+    --text: #0f172a;
 }
 
 body {
     margin: 0;
-    font-family: system-ui, -apple-system, sans-serif;
-    background: white;
-    color: var(--blue-text);
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    background: var(--white);
+    color: var(--text);
 }
 
+/* Header */
 header {
     background: var(--blue-main);
     color: white;
-    padding: 16px;
-    font-size: 1.3em;
+    padding: 16px 20px;
+    font-size: 1.4em;
     font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
-/* MAP */
+/* Karta */
 #map {
-    display: none;
+    display: none; /* visas först när man klickar på en rad */
     height: 45vh;
     width: 100%;
     border-bottom: 3px solid var(--blue-border);
 }
 
-/* TABLE */
+/* Tabell */
 .table-wrapper {
-    padding: 14px;
+    padding: 20px;
     overflow-x: auto;
 }
 
 table {
     width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9em;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.95em;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
 }
 
-th {
+thead th {
     background: var(--blue-soft);
     color: var(--blue-main);
-    padding: 12px;
+    padding: 12px 16px;
     border-bottom: 2px solid var(--blue-border);
     text-align: left;
+    position: sticky;
+    top: 0;
 }
 
-td {
-    padding: 12px;
-    border-bottom: 1px solid #e5e7eb;
+tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--blue-border);
 }
 
-tr:hover {
-    background: var(--blue-soft);
+tbody tr {
+    transition: background 0.25s;
+}
+
+tbody tr:hover {
+    background: var(--blue-hover);
     cursor: pointer;
 }
 
 .type {
-    font-weight: 700;
+    font-weight: 600;
     color: var(--blue-main);
 }
 
 .place {
-    font-weight: 600;
+    font-weight: 500;
     text-decoration: underline;
     color: var(--blue-main);
 }
 
-/* Mobile */
-@media (max-width: 600px) {
-    #map {
-        height: 40vh;
-    }
+.summary {
+    color: var(--text);
+}
+
+/* Scrollbar för moderna webbläsare */
+.table-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--blue-main);
+    border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: var(--blue-soft);
 }
 </style>
 </head>
 
 <body>
 
-<header>🚓 Polishändelser – Sverige</header>
+<header>🚓 Polishändelser – Modern Blå Tabell</header>
 
 <div id="map"></div>
 
@@ -130,7 +153,7 @@ async function loadEvents() {
             <td class="type">${event.type}</td>
             <td class="place">${event.location.name}</td>
             <td>${event.datetime}</td>
-            <td>${event.summary}</td>
+            <td class="summary">${event.summary}</td>
         `;
 
         tr.onclick = () => showMap(lat, lon, event);
@@ -144,10 +167,12 @@ function showMap(lat, lon, event) {
 
     if (!mapReady) {
         map = L.map("map").setView([lat, lon], 14);
+
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: 18,
             attribution: "© OpenStreetMap"
         }).addTo(map);
+
         mapReady = true;
     } else {
         map.setView([lat, lon], 14, { animate: true });
