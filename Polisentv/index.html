@@ -3,139 +3,116 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Polishändelser – TV Mode</title>
+<title>Polishändelser – TV Rullning</title>
 
 <style>
 :root {
     --blue-main: #0b4edb;
     --blue-soft: #eef4ff;
     --white: #ffffff;
+    --text: #ffffff;
 }
 
 body, html {
     margin: 0;
     padding: 0;
     background: var(--blue-main);
-    color: var(--white);
+    color: var(--text);
     font-family: system-ui, -apple-system, sans-serif;
+    height: 100vh;
     overflow: hidden;
 }
 
+/* Container för rullande lista */
 #tv-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-    text-align: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
     padding: 20px;
     box-sizing: border-box;
 }
 
+/* Lista */
+#event-list {
+    position: absolute;
+    width: 100%;
+}
+
+/* Varje rad */
 .event {
-    display: none;
-    font-size: 3em;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--blue-soft);
+    font-size: 2em;
     line-height: 1.4;
-    max-width: 90%;
-    text-align: center;
+    background: var(--blue-main);
 }
 
-.fullscreen-event {
-    display: block !important;
-    font-size: 4em;
-    background: var(--blue-soft);
-    color: var(--blue-main);
-    padding: 50px;
-    border-radius: 12px;
-    box-shadow: 0 0 50px rgba(0,0,0,0.5);
-    animation: fadeIn 1s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-50px);}
-    to { opacity: 1; transform: translateY(0);}
+/* För animation */
+@keyframes scrollUp {
+    0% { transform: translateY(100%); }
+    100% { transform: translateY(-100%); }
 }
 </style>
 </head>
 <body>
 
 <div id="tv-container">
-    <!-- Events kommer här -->
+    <div id="event-list"></div>
 </div>
 
 <audio id="newSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
 
 <script>
-const container = document.getElementById("tv-container");
+const eventList = document.getElementById("event-list");
 const sound = document.getElementById("newSound");
-
 let events = [];
-let currentIndex = 0;
 
 // Hämta polishändelser
 async function loadEvents() {
     const res = await fetch("https://polisen.se/api/events");
     const data = await res.json();
 
-    // Vi tar bara de 10 senaste för TV-mode
-    events = data.slice(0,10);
-    startTVMode();
-}
+    events = data.slice(0, 20); // max 20 händelser
 
-function startTVMode() {
-    if(events.length === 0) return;
-
-    // Visa första event direkt i fullscreen i 20 sekunder
-    showFullscreenEvent(events[0]);
-    currentIndex = 1;
-
-    setTimeout(() => {
-        // Start scroll loop efter 20 sek
-        scrollEvents();
-    }, 20000);
-}
-
-function showFullscreenEvent(event) {
-    container.innerHTML = "";
-    const div = document.createElement("div");
-    div.className = "event fullscreen-event";
-    div.innerHTML = `
-        <strong>${event.type}</strong><br>
-        📍 ${event.location.name}<br>
-        🕒 ${event.datetime}<br>
-        ${event.summary}
-    `;
-    container.appendChild(div);
-
-    // Spela ljud
-    sound.currentTime = 0;
-    sound.play();
-}
-
-function scrollEvents() {
-    container.innerHTML = "";
-    events.forEach((event, i) => {
+    // Bygg listan
+    events.forEach(event => {
         const div = document.createElement("div");
         div.className = "event";
         div.innerHTML = `
-            <strong>${event.type}</strong><br>
-            📍 ${event.location.name}<br>
-            🕒 ${event.datetime}<br>
+            <strong>${event.type}</strong> - ${event.location.name} - ${event.datetime}<br>
             ${event.summary}
         `;
-        container.appendChild(div);
+        eventList.appendChild(div);
     });
 
-    const allEvents = document.querySelectorAll(".event");
-    let index = 0;
+    startScrolling();
+}
 
-    setInterval(() => {
-        allEvents.forEach(e => e.style.display = "none");
-        allEvents[index].style.display = "block";
-        index++;
-        if(index >= allEvents.length) index = 0;
-    }, 5000); // 5 sek per event
+// Scroll-funktion
+function startScrolling() {
+    const totalHeight = eventList.scrollHeight;
+    let pos = 0;
+
+    function step() {
+        pos -= 1; // scroll speed
+        if (pos <= -totalHeight) pos = eventList.parentElement.clientHeight;
+
+        eventList.style.transform = `translateY(${pos}px)`;
+
+        // Om en ny händelse når toppen (ungefär) spela ljud
+        eventList.childNodes.forEach((child, index) => {
+            const rect = child.getBoundingClientRect();
+            if(rect.top <= 40 && rect.top > 0) {
+                sound.currentTime = 0;
+                sound.play();
+            }
+        });
+
+        requestAnimationFrame(step);
+    }
+
+    step();
 }
 
 loadEvents();
