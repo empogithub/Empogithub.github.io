@@ -9,39 +9,36 @@
 
 <style>
 :root {
-    --blue: #0b4edb;
+    --blue-main: #0b4edb;
     --blue-soft: #eef4ff;
-    --red: #d62828;
-    --red-soft: #fdecec;
-    --border: #dbe3f3;
-    --text: #0f172a;
+    --blue-border: #c7d7ff;
+    --blue-text: #0f172a;
 }
 
 body {
     margin: 0;
     font-family: system-ui, -apple-system, sans-serif;
-    background: #ffffff;
-    color: var(--text);
+    background: white;
+    color: var(--blue-text);
 }
 
-/* ===== HEADER ===== */
 header {
-    background: linear-gradient(90deg, var(--blue), var(--red));
+    background: var(--blue-main);
     color: white;
     padding: 16px;
     font-size: 1.3em;
     font-weight: 700;
 }
 
-/* ===== MAP ===== */
+/* MAP */
 #map {
     display: none;
     height: 45vh;
     width: 100%;
-    border-bottom: 3px solid var(--blue);
+    border-bottom: 3px solid var(--blue-border);
 }
 
-/* ===== TABLE ===== */
+/* TABLE */
 .table-wrapper {
     padding: 14px;
     overflow-x: auto;
@@ -55,36 +52,30 @@ table {
 
 th {
     background: var(--blue-soft);
-    color: var(--blue);
+    color: var(--blue-main);
     padding: 12px;
-    border-bottom: 2px solid var(--border);
+    border-bottom: 2px solid var(--blue-border);
     text-align: left;
 }
 
 td {
     padding: 12px;
-    border-bottom: 1px solid #eef0f5;
-    vertical-align: top;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 tr:hover {
-    background: var(--red-soft);
+    background: var(--blue-soft);
     cursor: pointer;
 }
 
-.type {
-    font-weight: 700;
-    color: var(--red);
-}
-
 .place {
-    color: var(--blue);
+    color: var(--blue-main);
     font-weight: 600;
     text-decoration: underline;
 }
 
 .police-link {
-    color: var(--red);
+    color: var(--blue-main);
     font-weight: 600;
     text-decoration: none;
 }
@@ -115,7 +106,7 @@ tr:hover {
                 <th>Typ</th>
                 <th>Plats</th>
                 <th>Tid</th>
-                <th>Info</th>
+                <th>Polisen</th>
             </tr>
         </thead>
         <tbody id="eventTable"></tbody>
@@ -138,16 +129,16 @@ async function loadEvents() {
         if (!event.location?.gps) return;
 
         const [lat, lon] = event.location.gps.split(",");
-        const policeUrl = `https://polisen.se/aktuellt/handelser/${event.id}`;
+        const searchUrl = `https://polisen.se/aktuellt/handelser/?q=${encodeURIComponent(event.location.name)}`;
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
-            <td class="type">${event.type}</td>
+            <td><strong>${event.type}</strong></td>
             <td class="place">${event.location.name}</td>
             <td>${event.datetime}</td>
             <td>
-                <a class="police-link" href="${policeUrl}" target="_blank">
-                    Läs på Polisen.se →
+                <a class="police-link" href="${searchUrl}" target="_blank">
+                    Öppna hos Polisen →
                 </a>
             </td>
         `;
@@ -163,12 +154,10 @@ function showMap(lat, lon, event) {
 
     if (!mapReady) {
         map = L.map("map").setView([lat, lon], 14);
-
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: 18,
             attribution: "© OpenStreetMap"
         }).addTo(map);
-
         mapReady = true;
     } else {
         map.setView([lat, lon], 14, { animate: true });
@@ -180,10 +169,7 @@ function showMap(lat, lon, event) {
         .bindPopup(`
             <strong>${event.type}</strong><br>
             📍 ${event.location.name}<br>
-            🕒 ${event.datetime}<br><br>
-            <a href="https://polisen.se/aktuellt/handelser/${event.id}" target="_blank">
-                Läs mer hos Polisen →
-            </a>
+            🕒 ${event.datetime}
         `)
         .openPopup();
 
