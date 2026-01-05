@@ -1,90 +1,114 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <title>Polishändelser</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            padding: 20px;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Polishändelser – Karta</title>
+
+<!-- Leaflet (karta) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<!-- Cloudflare Turnstile -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: white;
+        color: #000;
+    }
+
+    header {
+        padding: 15px;
+        text-align: center;
+        font-size: 1.3em;
+        font-weight: bold;
+        border-bottom: 1px solid #ddd;
+    }
+
+    #map {
+        height: 80vh;
+        width: 100%;
+    }
+
+    .verify-box {
+        padding: 15px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    @media (max-width: 600px) {
+        header {
+            font-size: 1.1em;
         }
-        h1 {
-            text-align: center;
-        }
-        .filter {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .event {
-            background: #fff;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-        }
-        .event h3 {
-            margin: 0 0 5px 0;
-        }
-        .meta {
-            color: #555;
-            font-size: 0.9em;
-        }
-    </style>
+    }
+</style>
 </head>
+
 <body>
 
-<h1>🚓 Aktuella polishändelser</h1>
+<header>🚓 Polishändelser – Live karta</header>
 
-<div class="filter">
-    <input type="text" id="locationInput" placeholder="Filtrera på plats (t.ex. Stockholm)">
-    <button onclick="loadEvents()">Sök</button>
+<!-- Cloudflare verifiering -->
+<div class="verify-box">
+    <div class="cf-turnstile"
+         data-sitekey="0x4AAAAAACKmybsgBUX-U7HE"
+         data-callback="onVerified">
+    </div>
 </div>
 
-<div id="events"></div>
+<div id="map"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-async function loadEvents() {
-    const locationFilter = document.getElementById("locationInput").value.toLowerCase();
-    const container = document.getElementById("events");
-    container.innerHTML = "Laddar händelser...";
+let map;
+let verified = false;
 
-    try {
-        const response = await fetch("https://polisen.se/api/events");
-        const data = await response.json();
-
-        container.innerHTML = "";
-
-        const filtered = data.filter(event =>
-            !locationFilter || event.location.name.toLowerCase().includes(locationFilter)
-        );
-
-        if (filtered.length === 0) {
-            container.innerHTML = "Inga händelser hittades.";
-            return;
-        }
-
-        filtered.forEach(event => {
-            const div = document.createElement("div");
-            div.className = "event";
-            div.innerHTML = `
-                <h3>${event.type}</h3>
-                <div class="meta">
-                    📍 ${event.location.name}<br>
-                    🕒 ${event.datetime}
-                </div>
-                <p>${event.summary}</p>
-            `;
-            container.appendChild(div);
-        });
-
-    } catch (error) {
-        container.innerHTML = "Kunde inte hämta data.";
-        console.error(error);
-    }
+function onVerified() {
+    verified = true;
+    initMap();
+    loadEvents();
 }
 
-loadEvents();
+function initMap() {
+    map = L.map('map').setView([59.3293, 18.0686], 6); // Sverige
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+}
+
+async function loadEvents() {
+    if (!verified) return;
+
+    try {
+        const res = await fetch("https://polisen.se/api/events");
+        const data = await res.json();
+
+        data.forEach(event => {
+            if (!event.location || !event.location.gps) return;
+
+            const [lat, lon] = event.location.gps.split(",");
+
+            L.marker([lat, lon]).addTo(map)
+                .bindPopup(`
+                    <strong>${event.type}</strong><br>
+                    📍 ${event.location.name}<br>
+                    🕒 ${event.datetime}<br><br>
+                    ${event.summary}
+                `);
+        });
+
+    } catch (e) {
+        alert("Kunde inte ladda polishändelser");
+        console.error(e);
+    }
+}
 </script>
 
 </body>
