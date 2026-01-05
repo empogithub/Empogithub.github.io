@@ -3,34 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Polishändelser – TV Rullning</title>
+<title>Polishändelser – Live TV</title>
 
 <style>
 :root {
     --blue-main: #0b4edb;
     --blue-soft: #eef4ff;
     --white: #ffffff;
-    --text: #ffffff;
 }
 
 body, html {
     margin: 0;
     padding: 0;
     background: var(--blue-main);
-    color: var(--text);
+    color: var(--white);
     font-family: system-ui, -apple-system, sans-serif;
-    height: 100vh;
     overflow: hidden;
+    height: 100vh;
 }
 
-/* Container för rullande lista */
+/* Container */
 #tv-container {
     position: relative;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    padding: 20px;
-    box-sizing: border-box;
 }
 
 /* Lista */
@@ -39,19 +36,29 @@ body, html {
     width: 100%;
 }
 
-/* Varje rad */
+/* Rad */
 .event {
-    padding: 10px 20px;
-    border-bottom: 1px solid var(--blue-soft);
-    font-size: 2em;
+    padding: 20px;
+    font-size: 2.2em;
     line-height: 1.4;
+    border-bottom: 1px solid var(--blue-soft);
     background: var(--blue-main);
 }
 
-/* För animation */
-@keyframes scrollUp {
-    0% { transform: translateY(100%); }
-    100% { transform: translateY(-100%); }
+/* Fullscreen ny händelse */
+.fullscreen-event {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4em;
+    padding: 50px;
+    background: var(--blue-soft);
+    color: var(--blue-main);
+    border-radius: 12px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    text-align: center;
+    z-index: 1000;
 }
 </style>
 </head>
@@ -64,46 +71,74 @@ body, html {
 <audio id="newSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
 
 <script>
-const eventList = document.getElementById("event-list");
+const container = document.getElementById("event-list");
 const sound = document.getElementById("newSound");
+
 let events = [];
+let scrollPos = 0;
+let rowHeight = 100;
 
-// Hämta polishändelser
-async function loadEvents() {
-    const res = await fetch("https://polisen.se/api/events");
-    const data = await res.json();
-
-    events = data.slice(0, 20); // max 20 händelser
-
-    // Bygg listan
-    events.forEach(event => {
-        const div = document.createElement("div");
-        div.className = "event";
-        div.innerHTML = `
-            <strong>${event.type}</strong> - ${event.location.name} - ${event.datetime}<br>
-            ${event.summary}
-        `;
-        eventList.appendChild(div);
-    });
-
-    startScrolling();
+// Hämta polishändelser och jämför med gamla
+async function fetchEvents() {
+    try {
+        const res = await fetch("https://polisen.se/api/events");
+        const data = await res.json();
+        return data.slice(0, 30); // max 30 händelser
+    } catch(e) {
+        console.error("Kunde inte hämta händelser", e);
+        return [];
+    }
 }
 
-// Scroll-funktion
+// Visa fullscreen ny händelse
+function showFullscreen(event) {
+    const fs = document.createElement("div");
+    fs.className = "fullscreen-event";
+    fs.innerHTML = `<strong>${event.type}</strong><br>📍 ${event.location.name}<br>🕒 ${event.datetime}<br>${event.summary}`;
+    document.body.appendChild(fs);
+    sound.play();
+
+    setTimeout(() => {
+        fs.remove();
+    }, 20000);
+}
+
+// Uppdatera listan med nya händelser
+function updateList(newEvents) {
+    const existingIds = Array.from(container.children).map(e => e.dataset.id);
+
+    newEvents.forEach(event => {
+        const eventId = event.id || event.datetime + event.location.name;
+        if(!existingIds.includes(eventId)) {
+            // Ny händelse → visa fullscreen
+            showFullscreen(event);
+
+            // Lägg till i listan längst ner
+            const div = document.createElement("div");
+            div.className = "event";
+            div.dataset.id = eventId;
+            div.innerHTML = `<strong>${event.type}</strong> - ${event.location.name} - ${event.datetime}<br>${event.summary}`;
+            container.appendChild(div);
+        }
+    });
+}
+
+// Scroll-loop
 function startScrolling() {
-    const totalHeight = eventList.scrollHeight;
-    let pos = 0;
+    const totalHeight = container.scrollHeight;
+    const speed = 1; // px/frame
 
     function step() {
-        pos -= 1; // scroll speed
-        if (pos <= -totalHeight) pos = eventList.parentElement.clientHeight;
+        scrollPos -= speed;
+        if(scrollPos <= -totalHeight) scrollPos = container.parentElement.clientHeight;
 
-        eventList.style.transform = `translateY(${pos}px)`;
+        container.style.transform = `translateY(${scrollPos}px)`;
 
-        // Om en ny händelse når toppen (ungefär) spela ljud
-        eventList.childNodes.forEach((child, index) => {
-            const rect = child.getBoundingClientRect();
-            if(rect.top <= 40 && rect.top > 0) {
+        // Spela ljud när rad når toppen
+        const rows = document.querySelectorAll(".event");
+        rows.forEach(row => {
+            const rect = row.getBoundingClientRect();
+            if(rect.top <= 10 && rect.top > -speed) {
                 sound.currentTime = 0;
                 sound.play();
             }
@@ -115,7 +150,30 @@ function startScrolling() {
     step();
 }
 
-loadEvents();
+// Start auto-refresh
+async function startLiveTV() {
+    // Första hämtning
+    const initialEvents = await fetchEvents();
+    initialEvents.forEach(event => {
+        const div = document.createElement("div");
+        div.className = "event";
+        div.dataset.id = event.id || event.datetime + event.location.name;
+        div.innerHTML = `<strong>${event.type}</strong> - ${event.location.name} - ${event.datetime}<br>${event.summary}`;
+        container.appendChild(div);
+    });
+
+    if(initialEvents[0]) showFullscreen(initialEvents[0]);
+
+    startScrolling();
+
+    // Uppdatera var 30 sekund
+    setInterval(async () => {
+        const latestEvents = await fetchEvents();
+        updateList(latestEvents);
+    }, 30000);
+}
+
+startLiveTV();
 </script>
 
 </body>
