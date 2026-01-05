@@ -38,27 +38,36 @@ body, html {
 
 /* Rad */
 .event {
-    padding: 20px;
-    font-size: 2.2em;
+    padding: 15px 20px;
+    font-size: 2em;
     line-height: 1.4;
     border-bottom: 1px solid var(--blue-soft);
     background: var(--blue-main);
 }
 
-/* Fullscreen ny händelse */
+/* Fullscreen ny händelse – mindre popup */
 .fullscreen-event {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 4em;
-    padding: 50px;
+    font-size: 2.5em; /* mindre än tidigare */
+    padding: 30px 40px; /* mindre padding */
+    max-width: 80%; /* tar inte hela skärmen */
     background: var(--blue-soft);
     color: var(--blue-main);
     border-radius: 12px;
-    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
     text-align: center;
     z-index: 1000;
+}
+
+/* Anpassa font-storlek på små skärmar */
+@media (max-width: 800px) {
+    .fullscreen-event {
+        font-size: 1.8em;
+        padding: 20px 25px;
+    }
 }
 </style>
 </head>
@@ -76,7 +85,6 @@ const sound = document.getElementById("newSound");
 
 let events = [];
 let scrollPos = 0;
-let rowHeight = 100;
 
 // Hämta polishändelser och jämför med gamla
 async function fetchEvents() {
@@ -90,7 +98,7 @@ async function fetchEvents() {
     }
 }
 
-// Visa fullscreen ny händelse
+// Visa popup för ny händelse (mindre version)
 function showFullscreen(event) {
     const fs = document.createElement("div");
     fs.className = "fullscreen-event";
@@ -100,7 +108,7 @@ function showFullscreen(event) {
 
     setTimeout(() => {
         fs.remove();
-    }, 20000);
+    }, 20000); // 20 sek
 }
 
 // Uppdatera listan med nya händelser
@@ -110,10 +118,10 @@ function updateList(newEvents) {
     newEvents.forEach(event => {
         const eventId = event.id || event.datetime + event.location.name;
         if(!existingIds.includes(eventId)) {
-            // Ny händelse → visa fullscreen
+            // Ny händelse → visa popup
             showFullscreen(event);
 
-            // Lägg till i listan längst ner
+            // Lägg till längst ner
             const div = document.createElement("div");
             div.className = "event";
             div.dataset.id = eventId;
@@ -125,11 +133,11 @@ function updateList(newEvents) {
 
 // Scroll-loop
 function startScrolling() {
-    const totalHeight = container.scrollHeight;
     const speed = 1; // px/frame
 
     function step() {
         scrollPos -= speed;
+        const totalHeight = container.scrollHeight;
         if(scrollPos <= -totalHeight) scrollPos = container.parentElement.clientHeight;
 
         container.style.transform = `translateY(${scrollPos}px)`;
@@ -150,9 +158,8 @@ function startScrolling() {
     step();
 }
 
-// Start auto-refresh
+// Starta TV-display med live-uppdatering
 async function startLiveTV() {
-    // Första hämtning
     const initialEvents = await fetchEvents();
     initialEvents.forEach(event => {
         const div = document.createElement("div");
@@ -163,10 +170,9 @@ async function startLiveTV() {
     });
 
     if(initialEvents[0]) showFullscreen(initialEvents[0]);
-
     startScrolling();
 
-    // Uppdatera var 30 sekund
+    // Uppdatera var 30 sek
     setInterval(async () => {
         const latestEvents = await fetchEvents();
         updateList(latestEvents);
