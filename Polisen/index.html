@@ -5,18 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Polishändelser</title>
 
-<!-- Leaflet -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
-<!-- Cloudflare Turnstile -->
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-
 <style>
-/* ====== BLÅTT TEMA ====== */
 :root {
-    --blue-main: #0b4edb;
-    --blue-light: #e8f0ff;
-    --blue-dark: #083a9b;
+    --blue-main: #2563eb;   /* collare-blå */
+    --blue-soft: #eff6ff;
+    --blue-border: #bfdbfe;
 }
 
 body {
@@ -26,24 +21,25 @@ body {
     color: #0f172a;
 }
 
-/* ====== HEADER ====== */
 header {
     padding: 14px;
-    font-size: 1.2em;
-    font-weight: 600;
     background: var(--blue-main);
     color: white;
+    font-weight: 600;
+    font-size: 1.2em;
 }
 
-/* ====== MAP ====== */
+/* ===== MAP (hidden by default) ===== */
 #map {
+    display: none;
     height: 45vh;
     width: 100%;
+    border-bottom: 2px solid var(--blue-border);
 }
 
-/* ====== TABLE ====== */
+/* ===== TABLE ===== */
 .table-wrapper {
-    padding: 10px;
+    padding: 12px;
     overflow-x: auto;
 }
 
@@ -54,11 +50,11 @@ table {
 }
 
 th {
-    background: var(--blue-light);
-    color: var(--blue-dark);
+    background: var(--blue-soft);
+    color: #1e3a8a;
     padding: 10px;
+    border-bottom: 2px solid var(--blue-border);
     text-align: left;
-    border-bottom: 2px solid #c7d7ff;
 }
 
 td {
@@ -67,7 +63,7 @@ td {
 }
 
 tr:hover {
-    background: #f0f6ff;
+    background: var(--blue-soft);
     cursor: pointer;
 }
 
@@ -77,31 +73,7 @@ tr:hover {
     text-decoration: underline;
 }
 
-/* ====== TURNSTILE OVERLAY ====== */
-#verifyOverlay {
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(135deg, #0b4edb, #0a3fa8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
-
-.verify-box {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-}
-
-.verify-box h2 {
-    margin-top: 0;
-    color: var(--blue-main);
-}
-
-/* Mobil */
+/* Mobile */
 @media (max-width: 600px) {
     #map {
         height: 40vh;
@@ -111,19 +83,6 @@ tr:hover {
 </head>
 
 <body>
-
-<!-- 🔐 TURNSTILE OVERLAY -->
-<div id="verifyOverlay">
-    <div class="verify-box">
-        <h2>Verifierar besökare</h2>
-        <p>Vänligen vänta…</p>
-
-        <div class="cf-turnstile"
-             data-sitekey="0x4AAAAAACKmybsgBUX-U7HE"
-             data-callback="onVerified">
-        </div>
-    </div>
-</div>
 
 <header>🚓 Polishändelser – Sverige</header>
 
@@ -147,21 +106,7 @@ tr:hover {
 
 <script>
 let map;
-
-function onVerified() {
-    document.getElementById("verifyOverlay").style.display = "none";
-    initMap();
-    loadEvents();
-}
-
-function initMap() {
-    map = L.map("map").setView([59.3293, 18.0686], 6);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 18,
-        attribution: "© OpenStreetMap"
-    }).addTo(map);
-}
+let mapInitialized = false;
 
 async function loadEvents() {
     const table = document.getElementById("eventTable");
@@ -174,14 +119,6 @@ async function loadEvents() {
 
         const [lat, lon] = event.location.gps.split(",");
 
-        const marker = L.marker([lat, lon]).addTo(map)
-            .bindPopup(`
-                <strong>${event.type}</strong><br>
-                📍 ${event.location.name}<br>
-                🕒 ${event.datetime}<br><br>
-                ${event.summary}
-            `);
-
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td><strong>${event.type}</strong></td>
@@ -190,14 +127,42 @@ async function loadEvents() {
             <td>${event.summary}</td>
         `;
 
-        tr.onclick = () => {
-            map.setView([lat, lon], 14, { animate: true });
-            marker.openPopup();
-        };
-
+        tr.onclick = () => showMap(lat, lon, event);
         table.appendChild(tr);
     });
 }
+
+function showMap(lat, lon, event) {
+    const mapDiv = document.getElementById("map");
+    mapDiv.style.display = "block";
+
+    if (!mapInitialized) {
+        map = L.map("map").setView([lat, lon], 14);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 18,
+            attribution: "© OpenStreetMap"
+        }).addTo(map);
+
+        mapInitialized = true;
+    } else {
+        map.setView([lat, lon], 14, { animate: true });
+    }
+
+    L.marker([lat, lon])
+        .addTo(map)
+        .bindPopup(`
+            <strong>${event.type}</strong><br>
+            📍 ${event.location.name}<br>
+            🕒 ${event.datetime}<br><br>
+            ${event.summary}
+        `)
+        .openPopup();
+
+    map.invalidateSize(); // viktigt när kartan visas dynamiskt
+}
+
+loadEvents();
 </script>
 
 </body>
