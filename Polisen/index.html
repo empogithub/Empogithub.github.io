@@ -68,20 +68,15 @@ tr:hover {
     cursor: pointer;
 }
 
+.type {
+    font-weight: 700;
+    color: var(--blue-main);
+}
+
 .place {
-    color: var(--blue-main);
     font-weight: 600;
     text-decoration: underline;
-}
-
-.police-link {
     color: var(--blue-main);
-    font-weight: 600;
-    text-decoration: none;
-}
-
-.police-link:hover {
-    text-decoration: underline;
 }
 
 /* Mobile */
@@ -106,7 +101,7 @@ tr:hover {
                 <th>Typ</th>
                 <th>Plats</th>
                 <th>Tid</th>
-                <th>Polisen</th>
+                <th>Sammanfattning</th>
             </tr>
         </thead>
         <tbody id="eventTable"></tbody>
@@ -129,18 +124,13 @@ async function loadEvents() {
         if (!event.location?.gps) return;
 
         const [lat, lon] = event.location.gps.split(",");
-        const searchUrl = `https://polisen.se/aktuellt/handelser/?q=${encodeURIComponent(event.location.name)}`;
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
-            <td><strong>${event.type}</strong></td>
+            <td class="type">${event.type}</td>
             <td class="place">${event.location.name}</td>
             <td>${event.datetime}</td>
-            <td>
-                <a class="police-link" href="${searchUrl}" target="_blank">
-                    Öppna hos Polisen →
-                </a>
-            </td>
+            <td>${event.summary}</td>
         `;
 
         tr.onclick = () => showMap(lat, lon, event);
@@ -169,7 +159,8 @@ function showMap(lat, lon, event) {
         .bindPopup(`
             <strong>${event.type}</strong><br>
             📍 ${event.location.name}<br>
-            🕒 ${event.datetime}
+            🕒 ${event.datetime}<br>
+            ${event.summary}
         `)
         .openPopup();
 
