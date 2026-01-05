@@ -162,4 +162,30 @@ function startScrolling(){
 // Start TV
 async function startLiveTV(){
     const initialEvents = await fetchEvents();
-    // Visa bara de
+    // Visa bara de 2 senaste i tickern initialt
+    const initialToShow = initialEvents.slice(-2);
+    initialToShow.forEach(event=>{
+        const eventId = event.id || event.datetime + event.location.name;
+        displayedIds.add(eventId);
+        const div = document.createElement("div");
+        div.className = "event";
+        div.dataset.id = eventId;
+        div.innerHTML = `<strong>${event.type}</strong> - ${event.location.name} - ${event.datetime}<br>${event.summary}`;
+        container.appendChild(div);
+    });
+
+    startScrolling();
+
+    // Kontrollera nya händelser var 30 sek
+    setInterval(async ()=>{
+        const latestEvents = await fetchEvents();
+        // Visa endast nya som inte redan finns
+        latestEvents.forEach(event=>addEventToTicker(event));
+    },30000);
+}
+
+startLiveTV();
+</script>
+
+</body>
+</html>
