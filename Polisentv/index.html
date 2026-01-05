@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polishändelser – TV Mode</title>
+
+<style>
+:root {
+    --blue-main: #0b4edb;
+    --blue-soft: #eef4ff;
+    --white: #ffffff;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    background: var(--blue-main);
+    color: var(--white);
+    font-family: system-ui, -apple-system, sans-serif;
+    overflow: hidden;
+}
+
+#tv-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.event {
+    display: none;
+    font-size: 3em;
+    line-height: 1.4;
+    max-width: 90%;
+    text-align: center;
+}
+
+.fullscreen-event {
+    display: block !important;
+    font-size: 4em;
+    background: var(--blue-soft);
+    color: var(--blue-main);
+    padding: 50px;
+    border-radius: 12px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-50px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+</style>
+</head>
+<body>
+
+<div id="tv-container">
+    <!-- Events kommer här -->
+</div>
+
+<audio id="newSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+
+<script>
+const container = document.getElementById("tv-container");
+const sound = document.getElementById("newSound");
+
+let events = [];
+let currentIndex = 0;
+
+// Hämta polishändelser
+async function loadEvents() {
+    const res = await fetch("https://polisen.se/api/events");
+    const data = await res.json();
+
+    // Vi tar bara de 10 senaste för TV-mode
+    events = data.slice(0,10);
+    startTVMode();
+}
+
+function startTVMode() {
+    if(events.length === 0) return;
+
+    // Visa första event direkt i fullscreen i 20 sekunder
+    showFullscreenEvent(events[0]);
+    currentIndex = 1;
+
+    setTimeout(() => {
+        // Start scroll loop efter 20 sek
+        scrollEvents();
+    }, 20000);
+}
+
+function showFullscreenEvent(event) {
+    container.innerHTML = "";
+    const div = document.createElement("div");
+    div.className = "event fullscreen-event";
+    div.innerHTML = `
+        <strong>${event.type}</strong><br>
+        📍 ${event.location.name}<br>
+        🕒 ${event.datetime}<br>
+        ${event.summary}
+    `;
+    container.appendChild(div);
+
+    // Spela ljud
+    sound.currentTime = 0;
+    sound.play();
+}
+
+function scrollEvents() {
+    container.innerHTML = "";
+    events.forEach((event, i) => {
+        const div = document.createElement("div");
+        div.className = "event";
+        div.innerHTML = `
+            <strong>${event.type}</strong><br>
+            📍 ${event.location.name}<br>
+            🕒 ${event.datetime}<br>
+            ${event.summary}
+        `;
+        container.appendChild(div);
+    });
+
+    const allEvents = document.querySelectorAll(".event");
+    let index = 0;
+
+    setInterval(() => {
+        allEvents.forEach(e => e.style.display = "none");
+        allEvents[index].style.display = "block";
+        index++;
+        if(index >= allEvents.length) index = 0;
+    }, 5000); // 5 sek per event
+}
+
+loadEvents();
+</script>
+
+</body>
+</html>
