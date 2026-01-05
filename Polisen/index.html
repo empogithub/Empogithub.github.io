@@ -9,37 +9,41 @@
 
 <style>
 :root {
-    --blue-main: #2563eb;   /* collare-blå */
-    --blue-soft: #eff6ff;
-    --blue-border: #bfdbfe;
+    --blue: #0b4edb;
+    --blue-soft: #eef4ff;
+    --red: #d62828;
+    --red-soft: #fdecec;
+    --border: #dbe3f3;
+    --text: #0f172a;
 }
 
 body {
     margin: 0;
     font-family: system-ui, -apple-system, sans-serif;
     background: #ffffff;
-    color: #0f172a;
+    color: var(--text);
 }
 
+/* ===== HEADER ===== */
 header {
-    padding: 14px;
-    background: var(--blue-main);
+    background: linear-gradient(90deg, var(--blue), var(--red));
     color: white;
-    font-weight: 600;
-    font-size: 1.2em;
+    padding: 16px;
+    font-size: 1.3em;
+    font-weight: 700;
 }
 
-/* ===== MAP (hidden by default) ===== */
+/* ===== MAP ===== */
 #map {
     display: none;
     height: 45vh;
     width: 100%;
-    border-bottom: 2px solid var(--blue-border);
+    border-bottom: 3px solid var(--blue);
 }
 
 /* ===== TABLE ===== */
 .table-wrapper {
-    padding: 12px;
+    padding: 14px;
     overflow-x: auto;
 }
 
@@ -51,25 +55,41 @@ table {
 
 th {
     background: var(--blue-soft);
-    color: #1e3a8a;
-    padding: 10px;
-    border-bottom: 2px solid var(--blue-border);
+    color: var(--blue);
+    padding: 12px;
+    border-bottom: 2px solid var(--border);
     text-align: left;
 }
 
 td {
-    padding: 10px;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 12px;
+    border-bottom: 1px solid #eef0f5;
+    vertical-align: top;
 }
 
 tr:hover {
-    background: var(--blue-soft);
+    background: var(--red-soft);
     cursor: pointer;
 }
 
+.type {
+    font-weight: 700;
+    color: var(--red);
+}
+
 .place {
-    color: var(--blue-main);
-    font-weight: 500;
+    color: var(--blue);
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.police-link {
+    color: var(--red);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.police-link:hover {
     text-decoration: underline;
 }
 
@@ -95,7 +115,7 @@ tr:hover {
                 <th>Typ</th>
                 <th>Plats</th>
                 <th>Tid</th>
-                <th>Sammanfattning</th>
+                <th>Info</th>
             </tr>
         </thead>
         <tbody id="eventTable"></tbody>
@@ -106,11 +126,11 @@ tr:hover {
 
 <script>
 let map;
-let mapInitialized = false;
+let mapReady = false;
+let activeMarker;
 
 async function loadEvents() {
     const table = document.getElementById("eventTable");
-
     const res = await fetch("https://polisen.se/api/events");
     const data = await res.json();
 
@@ -118,13 +138,18 @@ async function loadEvents() {
         if (!event.location?.gps) return;
 
         const [lat, lon] = event.location.gps.split(",");
+        const policeUrl = `https://polisen.se/aktuellt/handelser/${event.id}`;
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
-            <td><strong>${event.type}</strong></td>
+            <td class="type">${event.type}</td>
             <td class="place">${event.location.name}</td>
             <td>${event.datetime}</td>
-            <td>${event.summary}</td>
+            <td>
+                <a class="police-link" href="${policeUrl}" target="_blank">
+                    Läs på Polisen.se →
+                </a>
+            </td>
         `;
 
         tr.onclick = () => showMap(lat, lon, event);
@@ -136,7 +161,7 @@ function showMap(lat, lon, event) {
     const mapDiv = document.getElementById("map");
     mapDiv.style.display = "block";
 
-    if (!mapInitialized) {
+    if (!mapReady) {
         map = L.map("map").setView([lat, lon], 14);
 
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -144,22 +169,25 @@ function showMap(lat, lon, event) {
             attribution: "© OpenStreetMap"
         }).addTo(map);
 
-        mapInitialized = true;
+        mapReady = true;
     } else {
         map.setView([lat, lon], 14, { animate: true });
+        if (activeMarker) map.removeLayer(activeMarker);
     }
 
-    L.marker([lat, lon])
+    activeMarker = L.marker([lat, lon])
         .addTo(map)
         .bindPopup(`
             <strong>${event.type}</strong><br>
             📍 ${event.location.name}<br>
             🕒 ${event.datetime}<br><br>
-            ${event.summary}
+            <a href="https://polisen.se/aktuellt/handelser/${event.id}" target="_blank">
+                Läs mer hos Polisen →
+            </a>
         `)
         .openPopup();
 
-    map.invalidateSize(); // viktigt när kartan visas dynamiskt
+    map.invalidateSize();
 }
 
 loadEvents();
