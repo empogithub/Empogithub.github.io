@@ -1,89 +1,72 @@
-<!DOCTYPE html>
-<html lang="sv">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Empo.cc</title>
-
-    <style>
-        /* Grundläggande stil */
-        body {
-            font-family: 'Courier New', monospace;
-            background-color: #1e1e1e;
-            color: #ffffff;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        h1 {
-            color: #00ffcc;
-            text-shadow: 1px 1px #000000;
-        }
-
-        p {
-            font-size: 1.2em;
-            margin: 10px 0 30px 0;
-            text-align: center;
-            max-width: 600px;
-        }
-
-        a {
-            text-decoration: none;
-            color: #00ffcc;
-            background-color: #222222;
-            padding: 15px 25px;
-            margin: 10px;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-
-        a:hover {
-            background-color: #00ffcc;
-            color: #1e1e1e;
-        }
-
-        .button-container {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        footer {
-            margin-top: 50px;
-            font-size: 0.9em;
-            color: #888888;
-        }
-
-        .ad-container {
-            margin-top: 40px;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#cf9c9c">
+  <meta name="description" content="Explore Empo's websites, hosted sites, and archived projects.">
+  <title>Empo.cc</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <main class="page-panel">
+    <section class="welcome reveal">
+      <h1>Hi, im Empo!<br>Welcome To My Site</h1>
+    </section>
 
-    <h1>Empo.cc</h1>
-    <p>Welcome to empo.cc</p>
+    <section class="site-section reveal" aria-labelledby="my-sites-title">
+      <h2 id="my-sites-title">My Sites</h2>
+      <div class="site-grid">
+        <a class="site-card" href="caap.empo.cc" target="_blank" rel="noopener noreferrer">
+          <div class="image-wrap"><img src="" alt="Webiste Preview" loading="lazy"><span class="image-label">CAAP SUPERMARKET</span></div>
+          <div class="card-caption"><strong>Caap Official Website</strong><span>Caap Website ↗</span></div>
+        </a>
+        <a class="site-card" href="/" target="_blank" rel="noopener noreferrer">
+          <div class="image-wrap"><img src="" alt="Website Preview" loading="lazy"><span class="image-label">COMMING SOON</span></div>
+          <div class="card-caption"><strong>Now Games</strong><span>Browser games ↗</span></div>
+        </a>
+      </div>
+    </section>
 
-    <div class="button-container">
-        <a href="https://mc.empo.cc" target="_blank">Empo Pvp minecraft</a>
-        <a href="https://themes.empo.cc" target="_blank">Empo Themes</a>
-        <a href="https://bio.empo.cc" target="_blank">Bio tape</a>
-    </div>
+    <section class="site-section hosted-section reveal" aria-labelledby="hosted-sites-title">
+      <h2 id="hosted-sites-title">Hosted Sites:</h2>
+      <div class="site-grid hosted-grid">
+        <a class="site-card" href="https://blackstar.host.empo.cc/" target="_blank" rel="noopener noreferrer">
+          <div class="image-wrap"><img src="https://cdn.nest.rip/uploads/a8d4b76e-37b8-4f4b-bf8f-9c15b72f2d41.png" alt="Website Preview" loading="lazy"><span class="image-label"></span></div>
+          <div class="card-caption"><strong>By BlackStar Development</strong><span>Blackstar website ↗</span></div>
+        </a>
+    </section>
 
-    <!-- Adsterra annons -->
-    <div class="ad-container">
-        <script src="https://pl28640642.effectivegatecpm.com/24/b9/fc/24b9fcc862c079e5a23f8058214834ea.js"></script>
-    </div>
+    <section class="site-section archived-section reveal" aria-labelledby="archived-title">
+      <h2 id="archived-title">Archived Projects</h2>
+      <p class="section-description">Older projects and experiments I've worked on.</p>
+      <div class="site-grid archived-grid">
+        <article class="site-card archived-card">
+          <div class="image-wrap"><img src="https://cdn.nest.rip/uploads/1d699230-03fa-43b2-8493-b85613bd0a9d.png" alt="Site Preview" loading="lazy"><span class="image-label">ARCHIVED</span></div>
+          <div class="card-caption"><strong>Empo Games</strong><span>Online Games Site</span></div>
+        </article>
+        <article class="site-card archived-card">
+          <div class="image-wrap"><img src="https://cdn.nest.rip/uploads/5ea6b2b0-78ef-4b07-8964-b85d071d819a.png" alt="Site Preview" loading="lazy"><span class="image-label">ARCHIVED</span></div>
+          <div class="card-caption"><strong>Empo Themes</strong><span>Chrome And Ios Themes</span></div>
+        </article>
+      </div>
+    </section>
 
-    <footer>
-        &copy; 2026 Empo.cc | &copy; 2026 Empodev.xyz
-    </footer>
-
+    <section class="hosting-cta reveal">
+      <div><h2>Want your website hosted? Or Something Else?</h2><p>Send me an email.</p></div>
+      <a class="mail-button" href="mailto:Empo@empo.cc?subject=Website%20hosting%20request&body=Hi%20Empo%2C%0A%0AI%27m%20interested%20in%20getting%20my%20website%20hosted.%0A%0AWebsite%20URL%20or%20project%3A%20%0A%0AThanks!">Email me ↗</a>
+    </section>
+    <footer><span>empo.cc</span><span>Built by Empo · © <span id="year"></span></span></footer>
+  </main>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const items = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+        if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+      }), { threshold: 0.08 });
+      items.forEach(item => observer.observe(item));
+    } else items.forEach(item => item.classList.add('visible'));
+  </script>
 </body>
 </html>
