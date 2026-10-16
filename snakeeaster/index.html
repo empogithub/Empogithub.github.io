@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d08">
+  <title>Snake</title>
+  <link rel="stylesheet" href="/style.css">
+
+  <style>
+    html:not(.embed-authorized) body { visibility: hidden; }
+
+    :root {
+      --pink: #bf3636;
+      --pink-light: #ed4545;
+      --ink: #080606;
+      --paper: #fff;
+      --gap: clamp(18px, 3vw, 36px);
+      --round: 14px;
+    }
+
+    .snake-page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: var(--gap);
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .snake-game { width: min(620px, 100%); }
+
+    .snake-score {
+      margin-bottom: 12px;
+      text-align: center;
+      color: var(--pink-light);
+      font: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+    }
+
+    .snake-score span { font-variant-numeric: tabular-nums; }
+
+    .snake-frame {
+      position: relative;
+      padding: 8px;
+      overflow: hidden;
+      border: 1px solid var(--pink);
+      border-radius: var(--round);
+      background: var(--ink);
+    }
+
+    #snake-board {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1;
+      background: var(--ink);
+      image-rendering: pixelated;
+      outline: none;
+    }
+
+    .snake-over {
+      position: absolute;
+      inset: 8px;
+      display: grid;
+      place-items: center;
+      background: rgba(8, 13, 8, 0.88);
+      text-align: center;
+    }
+
+    .snake-over[hidden] { display: none; }
+
+    .snake-over h1 {
+      margin: 0 0 8px;
+      color: var(--pink-light);
+      font: inherit;
+      font-size: clamp(24px, 5vw, 36px);
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .snake-over p {
+      margin: 0;
+      color: var(--paper);
+      font-size: 13px;
+    }
+
+    @media (max-width: 480px) {
+      .snake-page { padding: 12px; }
+      .snake-frame { padding: 5px; }
+      .snake-over { inset: 5px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="snake-page">
+    <section class="snake-game" aria-label="Snake game">
+      <div class="snake-score">SCORE: <span id="snake-score">0</span></div>
+      <div class="snake-frame">
+        <canvas id="snake-board" width="600" height="600" tabindex="0" aria-label="Snake game board"></canvas>
+        <div class="snake-over" id="snake-over" hidden>
+          <div>
+            <h1>GAME OVER</h1>
+            <p>Press ENTER to restart</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      // Only allow the game to run inside an iframe embedded by Blackstar.
+      const allowedHosts = ["empo.cc", "www.empo.cc"];
+
+      function isAllowedEmbed() {
+        if (window.self === window.top) return false;
+
+        try {
+          if (document.referrer) {
+            const referrer = new URL(document.referrer);
+            if (referrer.protocol === "https:" && allowedHosts.includes(referrer.hostname)) {
+              return true;
+            }
+          }
+
+          const ancestors = window.location.ancestorOrigins;
+          if (ancestors) {
+            return Array.from(ancestors).some(origin => {
+              try {
+                const url = new URL(origin);
+                return url.protocol === "https:" && allowedHosts.includes(url.hostname);
+              } catch {
+                return false;
+              }
+            });
+          }
+        } catch (_) {}
+
+        return false;
+      }
+
+      if (!isAllowedEmbed()) {
+        document.documentElement.innerHTML = "";
+        return;
+      }
+
+      document.documentElement.classList.add("embed-authorized");
+
+      const canvas = document.getElementById("snake-board");
+      const ctx = canvas.getContext("2d");
+      const scoreDisplay = document.getElementById("snake-score");
+      const gameOver = document.getElementById("snake-over");
+
+      const grid = 30;
+      const tile = canvas.width / grid;
+      const css = getComputedStyle(document.documentElement);
+      const getColor = name => css.getPropertyValue(name).trim();
+
+      const pink = getColor("--pink") || "#bf3636";
+      const pinkLight = getColor("--pink-light") || "#ed4545";
+      const panel = getColor("--ink") || "#080606";
+      const border = pink;
+
+      let snake, food, direction, queuedDirection, score, gameEnded;
+      let lastFrame = 0;
+      let elapsed = 0;
+      const speed = 105;
+
+      function placeFood() {
+        let point;
+        do {
+          point = {
+            x: Math.floor(Math.random() * grid),
+            y: Math.floor(Math.random() * grid)
+          };
+        } while (snake.some(part => part.x === point.x && part.y === point.y));
+        return point;
+      }
+
+      function startGame() {
+        snake = [{x:14,y:15},{x:13,y:15},{x:12,y:15}];
+        direction = {x:1,y:0};
+        queuedDirection = {x:1,y:0};
+        score = 0;
+        gameEnded = false;
+        elapsed = 0;
+        lastFrame = 0;
+        scoreDisplay.textContent = "0";
+        gameOver.hidden = true;
+        food = placeFood();
+        draw();
+      }
+
+      function finishGame() {
+        gameEnded = true;
+        gameOver.hidden = false;
+      }
+
+      function step() {
+        direction = queuedDirection;
+        const head = {
+          x: snake[0].x + direction.x,
+          y: snake[0].y + direction.y
+        };
+
+        if (head.x < 0 || head.x >= grid || head.y < 0 || head.y >= grid) {
+          finishGame();
+          return;
+        }
+
+        const eating = head.x === food.x && head.y === food.y;
+        const bodyToCheck = eating ? snake : snake.slice(0, -1);
+
+        if (bodyToCheck.some(part => part.x === head.x && part.y === head.y)) {
+          finishGame();
+          return;
+        }
+
+        snake.unshift(head);
+
+        if (eating) {
+          score++;
+          scoreDisplay.textContent = String(score);
+          food = placeFood();
+        } else {
+          snake.pop();
+        }
+
+        draw();
+      }
+
+      function draw() {
+        ctx.fillStyle = panel;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = "rgba(36, 67, 41, 0.28)";
+        ctx.lineWidth = 1;
+
+        for (let i = 1; i < grid; i++) {
+          const pos = i * tile;
+          ctx.beginPath();
+          ctx.moveTo(pos, 0);
+          ctx.lineTo(pos, canvas.height);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(0, pos);
+          ctx.lineTo(canvas.width, pos);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = pink;
+        ctx.shadowColor = pinkLight;
+        ctx.shadowBlur = 10;
+        ctx.fillRect(food.x * tile + 4, food.y * tile + 4, tile - 8, tile - 8);
+
+        snake.forEach((part, index) => {
+          const inset = index === 0 ? 2 : 3;
+          ctx.fillStyle = index === 0 ? pinkLight : pink;
+          ctx.shadowColor = pinkLight;
+          ctx.shadowBlur = index === 0 ? 8 : 0;
+          ctx.fillRect(
+            part.x * tile + inset,
+            part.y * tile + inset,
+            tile - inset * 2,
+            tile - inset * 2
+          );
+        });
+
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = border;
+        ctx.strokeRect(0.5, 0.5, canvas.width - 1, canvas.height - 1);
+      }
+
+      function turn(x, y) {
+        if (x === -direction.x && y === -direction.y) return;
+        queuedDirection = {x, y};
+      }
+
+      document.addEventListener("keydown", event => {
+        const key = event.key.toLowerCase();
+        const controls = ["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d","enter"];
+        if (controls.includes(key)) event.preventDefault();
+
+        if (gameEnded && key === "enter") {
+          startGame();
+          return;
+        }
+        if (gameEnded) return;
+
+        switch (key) {
+          case "arrowup":
+          case "w": turn(0, -1); break;
+          case "arrowdown":
+          case "s": turn(0, 1); break;
+          case "arrowleft":
+          case "a": turn(-1, 0); break;
+          case "arrowright":
+          case "d": turn(1, 0); break;
+        }
+      });
+
+      function frame(timestamp) {
+        if (!lastFrame) lastFrame = timestamp;
+        elapsed += Math.min(timestamp - lastFrame, 250);
+        lastFrame = timestamp;
+
+        while (!gameEnded && elapsed >= speed) {
+          step();
+          elapsed -= speed;
+        }
+
+        requestAnimationFrame(frame);
+      }
+
+      startGame();
+      requestAnimationFrame(frame);
+    })();
+  </script>
+</body>
+</html>
