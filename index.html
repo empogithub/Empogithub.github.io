@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,88 +8,22 @@
   <meta name="description" content="Explore Empo's websites, hosted sites, and archived projects.">
   <title>Empo.cc</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    .secret-trigger {
-      color: inherit;
-      font: inherit;
-      font-weight: inherit;
-      letter-spacing: inherit;
-      background: none;
-      border: 0;
-      padding: 0;
-      cursor: pointer;
-    }
-    .secret-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display: grid;
-      place-items: center;
-      padding: 22px;
-      background: rgba(8, 6, 6, .72);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity .22s ease, visibility .22s ease;
-    }
-    .secret-overlay.is-open { opacity: 1; visibility: visible; }
-    .secret-modal {
-      position: relative;
-      width: min(100%, 760px);
-      padding: 18px;
-      background: var(--paper, #fff);
-      border: 1px solid var(--pink, #bf3636);
-      border-radius: var(--round, 14px);
-      box-shadow: 0 24px 80px rgba(0, 0, 0, .25);
-      transform: translateY(12px) scale(.98);
-      transition: transform .22s ease;
-    }
-    .secret-overlay.is-open .secret-modal { transform: translateY(0) scale(1); }
-    .secret-close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 2;
-      display: grid;
-      place-items: center;
-      width: 36px;
-      height: 36px;
-      padding: 0;
-      color: var(--ink, #080606);
-      background: var(--paper, #fff);
-      border: 1px solid rgba(8, 6, 6, .18);
-      border-radius: 50%;
-      font: inherit;
-      font-size: 23px;
-      line-height: 1;
-      cursor: pointer;
-    }
-    .secret-close:hover { color: white; background: var(--pink, #bf3636); border-color: var(--pink, #bf3636); }
-    .secret-frame {
-      display: block;
-      width: 100%;
-      height: min(78vh, 700px);
-      border: 0;
-      border-radius: calc(var(--round, 14px) - 4px);
-      background: var(--ink, #080606);
-    }
-    body.secret-modal-open { overflow: hidden; }
-    @media (prefers-reduced-motion: reduce) { .secret-overlay, .secret-modal { transition: none; } }
-  </style>
 </head>
-  <script src="https://app.termly.io/resource-blocker/2f5387fd-8b01-405e-89a6-31443af720a2?autoBlock=on"></script>
-  <!-- Google tag (gtag.js) -->
+
+<script src="https://app.termly.io/resource-blocker/2f5387fd-8b01-405e-89a6-31443af720a2?autoBlock=on"></script>
+
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-GZ658ENR9W"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-GZ658ENR9W');
 </script>
+
 <body>
   <main class="page-panel">
+
     <section class="welcome reveal">
       <h1>Hi, im <button class="secret-trigger" id="empo-secret-trigger" type="button">Empo</button>!<br>Welcome To My Site</h1>
     </section>
@@ -97,12 +32,25 @@
       <h2 id="my-sites-title">My Sites</h2>
       <div class="site-grid">
         <a class="site-card" href="caap.empo.cc" target="_blank" rel="noopener noreferrer">
-          <div class="image-wrap"><img src="" alt="Webiste Preview" loading="lazy"><span class="image-label">CAAP SUPERMARKET</span></div>
-          <div class="card-caption"><strong>Caap Official Website</strong><span>Caap Website ↗</span></div>
+          <div class="image-wrap">
+            <img src="" alt="Webiste Preview" loading="lazy">
+            <span class="image-label">CAAP SUPERMARKET</span>
+          </div>
+          <div class="card-caption">
+            <strong>Caap Official Website</strong>
+            <span>Caap Website ↗</span>
+          </div>
         </a>
+
         <a class="site-card" href="/" target="_blank" rel="noopener noreferrer">
-          <div class="image-wrap"><img src="" alt="Website Preview" loading="lazy"><span class="image-label">COMMING SOON</span></div>
-          <div class="card-caption"><strong>Now Games</strong><span>Browser games ↗</span></div>
+          <div class="image-wrap">
+            <img src="" alt="Website Preview" loading="lazy">
+            <span class="image-label">COMMING SOON</span>
+          </div>
+          <div class="card-caption">
+            <strong>Now Games</strong>
+            <span>Browser games ↗</span>
+          </div>
         </a>
       </div>
     </section>
@@ -111,61 +59,121 @@
       <h2 id="hosted-sites-title">Hosted Sites:</h2>
       <div class="site-grid hosted-grid">
         <a class="site-card" href="https://blackstar.host.empo.cc/" target="_blank" rel="noopener noreferrer">
-          <div class="image-wrap"><img src="https://cdn.nest.rip/uploads/a8d4b76e-37b8-4f4b-bf8f-9c15b72f2d41.png" alt="Website Preview" loading="lazy"><span class="image-label"></span></div>
-          <div class="card-caption"><strong>By BlackStar Development</strong><span>Blackstar website ↗</span></div>
+          <div class="image-wrap">
+            <img src="https://cdn.nest.rip/uploads/a8d4b76e-37b8-4f4b-bf8f-9c15b72f2d41.png" alt="Website Preview" loading="lazy">
+            <span class="image-label"></span>
+          </div>
+          <div class="card-caption">
+            <strong>By BlackStar Development</strong>
+            <span>Blackstar website ↗</span>
+          </div>
         </a>
     </section>
 
     <section class="site-section archived-section reveal" aria-labelledby="archived-title">
       <h2 id="archived-title">Archived Projects</h2>
       <p class="section-description">Older projects and experiments I've worked on.</p>
+
       <div class="site-grid archived-grid">
         <article class="site-card archived-card">
-          <div class="image-wrap"><img src="https://cdn.nest.rip/uploads/1d699230-03fa-43b2-8493-b85613bd0a9d.png" alt="Site Preview" loading="lazy"><span class="image-label">ARCHIVED</span></div>
-          <div class="card-caption"><strong>Empo Games</strong><span>Online Games Site</span></div>
+          <div class="image-wrap">
+            <img src="https://cdn.nest.rip/uploads/1d699230-03fa-43b2-8493-b85613bd0a9d.png" alt="Site Preview" loading="lazy">
+            <span class="image-label">ARCHIVED</span>
+          </div>
+          <div class="card-caption">
+            <strong>Empo Games</strong>
+            <span>Online Games Site</span>
+          </div>
         </article>
+
         <article class="site-card archived-card">
-          <div class="image-wrap"><img src="https://cdn.nest.rip/uploads/5ea6b2b0-78ef-4b07-8964-b85d071d819a.png" alt="Site Preview" loading="lazy"><span class="image-label">ARCHIVED</span></div>
-          <div class="card-caption"><strong>Empo Themes</strong><span>Chrome And Ios Themes</span></div>
+          <div class="image-wrap">
+            <img src="https://cdn.nest.rip/uploads/5ea6b2b0-78ef-4b07-8964-b85d071d819a.png" alt="Site Preview" loading="lazy">
+            <span class="image-label">ARCHIVED</span>
+          </div>
+          <div class="card-caption">
+            <strong>Empo Themes</strong>
+            <span>Chrome And Ios Themes</span>
+          </div>
         </article>
       </div>
     </section>
 
     <section class="hosting-cta reveal">
-      <div><h2>Want your website hosted? Or Something Else?</h2><p>Send me an email.</p></div>
+      <div>
+        <h2>Want your website hosted? Or Something Else?</h2>
+        <p>Send me an email.</p>
+      </div>
       <a class="mail-button" href="mailto:Empo@empo.cc?subject=Website%20hosting%20request&body=Hi%20Empo%2C%0A%0AI%27m%20interested%20in%20getting%20my%20website%20hosted.%0A%0AWebsite%20URL%20or%20project%3A%20%0A%0AThanks!">Email me ↗</a>
     </section>
-    <footer><span>empo.cc</span><a href="#" class="termly-display-preferences">Consent Preferences</a><span>Built by Empo · © <span id="year"></span></span></footer>
+
+    <footer>
+      <span>empo.cc</span>
+      <a href="#" class="termly-display-preferences">Consent Preferences</a>
+      <span>Built by Empo · © <span id="year"></span></span>
+    </footer>
+
   </main>
 
+  <!-- Secret iframe popup -->
   <div class="secret-overlay" id="secret-overlay" aria-hidden="true">
-    <section class="secret-modal" role="dialog" aria-modal="true" aria-label="Secret iframe">
+    <section class="secret-modal" role="dialog" aria-modal="true" aria-label="Secret page">
       <button class="secret-close" id="secret-close" type="button" aria-label="Close">×</button>
-      <iframe class="secret-frame" src="/snakeeaster" title="Secret page" loading="lazy"></iframe>
+      <iframe
+        class="secret-frame"
+        id="secret-frame"
+        src="/snakeeaster"
+        title="Secret page"
+        loading="lazy">
+      </iframe>
     </section>
   </div>
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+
     const items = document.querySelectorAll('.reveal');
-    if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-        if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
-      }), { threshold: 0.08 });
+
+    if (
+      'IntersectionObserver' in window &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.08 });
+
       items.forEach(item => observer.observe(item));
-    } else items.forEach(item => item.classList.add('visible'));
+    } else {
+      items.forEach(item => item.classList.add('visible'));
+    }
 
     const secretTrigger = document.getElementById('empo-secret-trigger');
     const secretOverlay = document.getElementById('secret-overlay');
     const secretClose = document.getElementById('secret-close');
-    const secretNames = ['Empo.exe', 'Developer mode', '404 Empo', 'Almost there', 'Secret unlocked'];
+    const secretFrame = document.getElementById('secret-frame');
+
+    const secretNames = [
+      'Empo.cc',
+      'Comming Soon: Nowgames',
+      'Empodev.xyz',
+      'i spend like 30€ On All My Domains!',
+      'SNAKEEE'
+    ];
+
     let secretClickCount = 0;
 
     secretTrigger.addEventListener('click', () => {
-      secretClickCount += 1;
+      if (secretClickCount >= 5) return;
+
+      secretClickCount++;
       secretTrigger.textContent = secretNames[secretClickCount - 1];
+
       if (secretClickCount === 5) {
-        secretClickCount = 0;
         secretOverlay.classList.add('is-open');
         secretOverlay.setAttribute('aria-hidden', 'false');
         document.body.classList.add('secret-modal-open');
@@ -177,14 +185,29 @@
       secretOverlay.classList.remove('is-open');
       secretOverlay.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('secret-modal-open');
+
+      secretClickCount = 0;
+      secretTrigger.textContent = 'Empo';
+
+      secretFrame.src = '/snakeeaster';
       secretTrigger.focus();
     }
+
     secretClose.addEventListener('click', closeSecretIframe);
+
     secretOverlay.addEventListener('click', event => {
-      if (event.target === secretOverlay) closeSecretIframe();
+      if (event.target === secretOverlay) {
+        closeSecretIframe();
+      }
     });
+
     document.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && secretOverlay.classList.contains('is-open')) closeSecretIframe();
+      if (
+        event.key === 'Escape' &&
+        secretOverlay.classList.contains('is-open')
+      ) {
+        closeSecretIframe();
+      }
     });
   </script>
 </body>
