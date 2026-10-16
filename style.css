@@ -1,4 +1,4 @@
-:root{--pink:#cf9c9c;--pink-light:#e5c5c5;--ink:#080606;--paper:#fff;--gap:clamp(18px,3vw,36px);--round:14px}
+:root{--pink:#bf3636;--pink-light:#ed4545;--ink:#080606;--paper:#fff;--gap:clamp(18px,3vw,36px);--round:14px}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;min-height:100vh;padding:clamp(24px,10.3vh,110px) 18px 48px}
