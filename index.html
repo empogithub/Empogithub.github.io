@@ -6,43 +6,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#cf9c9c">
   <meta name="description" content="Explore Empo's websites, hosted sites, and archived projects.">
-
   <title>Empo.cc</title>
-
   <link rel="stylesheet" href="style.css">
 
   <!-- Google AdSense -->
-  <script
-    async
+  <script async
     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5821644364550005"
-    crossorigin="anonymous">
-  </script>
+    crossorigin="anonymous"></script>
 
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-GZ658ENR9W"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-GZ658ENR9W');
   </script>
 
   <style>
-    /* Advertisement layout */
     .ad-section {
-      width: 100%;
-      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      margin: 28px auto;
-      padding: 12px 8px;
+      gap: 9px;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 14px 8px;
+      margin: 22px auto;
       overflow: hidden;
     }
 
@@ -50,25 +41,23 @@
       font-size: 10px;
       letter-spacing: 2px;
       text-transform: uppercase;
-      opacity: 0.55;
+      opacity: .55;
     }
 
     .ad-slot {
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       max-width: 100%;
-      min-width: 0;
       overflow: hidden;
     }
 
     .ad-banner {
       width: 468px;
       min-height: 60px;
-      max-width: 100%;
     }
 
-    .ad-skyscraper {
+    .ad-tall {
       width: 160px;
       min-height: 300px;
     }
@@ -79,387 +68,363 @@
     }
 
     @media (max-width: 500px) {
-      .ad-section {
-        padding-left: 4px;
-        padding-right: 4px;
-      }
-
-      .ad-banner {
-        width: 100%;
-      }
+      .ad-section { padding: 12px 4px; }
+      .ad-banner { width: 100%; }
     }
   </style>
 </head>
 
 <body>
-  <main class="page-panel">
+<main class="page-panel">
 
-    <!-- Welcome -->
-    <section class="welcome reveal">
-      <h1>
-        Hi, im
-        <button
-          class="secret-trigger"
-          id="empo-secret-trigger"
-          type="button">Empo</button>!
-        <br>
-        Welcome To My Site
-      </h1>
-    </section>
+  <section class="welcome reveal">
+    <h1>Hi, im
+      <button class="secret-trigger" id="empo-secret-trigger" type="button">Empo</button>!
+      <br>Welcome To My Site
+    </h1>
+  </section>
 
-    <!-- 468 x 60 Advertisement -->
-    <section class="ad-section" aria-label="Advertisement">
-      <span class="ad-label">Advertisement</span>
-      <div class="ad-slot ad-banner" id="skykrape-banner"></div>
-    </section>
+  <!-- AD 1: Banner -->
+  <section class="ad-section" aria-label="Advertisement">
+    <span class="ad-label">Advertisement</span>
+    <div class="ad-slot ad-banner" id="ad-banner-1"></div>
+  </section>
 
-    <!-- My Sites -->
-    <section class="site-section reveal" aria-labelledby="my-sites-title">
-      <h2 id="my-sites-title">My Sites</h2>
+  <!-- MY SITES -->
+  <section class="site-section reveal" aria-labelledby="my-sites-title">
+    <h2 id="my-sites-title">My Sites</h2>
+    <div class="site-grid">
 
-      <div class="site-grid">
-
-        <a
-          class="site-card"
-          href="https://caap.empo.cc/"
-          target="_blank"
-          rel="noopener noreferrer">
-
-          <div class="image-wrap">
-            <img
-              src=""
-              alt="CAAP Website Preview"
-              loading="lazy">
-            <span class="image-label">CAAP SUPERMARKET</span>
-          </div>
-
-          <div class="card-caption">
-            <strong>Caap Official Website</strong>
-            <span>Caap Website ↗</span>
-          </div>
-        </a>
-
-        <a
-          class="site-card"
-          href="/"
-          target="_blank"
-          rel="noopener noreferrer">
-
-          <div class="image-wrap">
-            <img
-              src=""
-              alt="Now Games Website Preview"
-              loading="lazy">
-            <span class="image-label">COMING SOON</span>
-          </div>
-
-          <div class="card-caption">
-            <strong>Now Games</strong>
-            <span>Browser games ↗</span>
-          </div>
-        </a>
-
-      </div>
-    </section>
-
-    <!-- Hosted Sites -->
-    <section
-      class="site-section hosted-section reveal"
-      aria-labelledby="hosted-sites-title">
-
-      <h2 id="hosted-sites-title">Hosted Sites</h2>
-
-      <div class="site-grid hosted-grid">
-
-        <a
-          class="site-card"
-          href="https://blackstar.host.empo.cc/"
-          target="_blank"
-          rel="noopener noreferrer">
-
-          <div class="image-wrap">
-            <img
-              src="https://cdn.nest.rip/uploads/a8d4b76e-37b8-4f4b-bf8f-9c15b72f2d41.png"
-              alt="BlackStar Development Website Preview"
-              loading="lazy">
-
-            <span class="image-label">HOSTED</span>
-          </div>
-
-          <div class="card-caption">
-            <strong>By BlackStar Development</strong>
-            <span>BlackStar Website ↗</span>
-          </div>
-        </a>
-
-      </div>
-    </section>
-
-    <!-- 160 x 300 Advertisement -->
-    <section class="ad-section" aria-label="Advertisement">
-      <span class="ad-label">Advertisement</span>
-      <div class="ad-slot ad-skyscraper" id="skykrape-tall"></div>
-    </section>
-
-    <!-- Archived Projects -->
-    <section
-      class="site-section archived-section reveal"
-      aria-labelledby="archived-title">
-
-      <h2 id="archived-title">Archived Projects</h2>
-
-      <p class="section-description">
-        Older projects and experiments I've worked on.
-      </p>
-
-      <div class="site-grid archived-grid">
-
-        <article class="site-card archived-card">
-          <div class="image-wrap">
-            <img
-              src="https://cdn.nest.rip/uploads/1d699230-03fa-43b2-8493-b85613bd0a9d.png"
-              alt="Empo Games Website Preview"
-              loading="lazy">
-
-            <span class="image-label">ARCHIVED</span>
-          </div>
-
-          <div class="card-caption">
-            <strong>Empo Games</strong>
-            <span>Online Games Site</span>
-          </div>
-        </article>
-
-        <article class="site-card archived-card">
-          <div class="image-wrap">
-            <img
-              src="https://cdn.nest.rip/uploads/5ea6b2b0-78ef-4b07-8964-b85d071d819a.png"
-              alt="Empo Themes Website Preview"
-              loading="lazy">
-
-            <span class="image-label">ARCHIVED</span>
-          </div>
-
-          <div class="card-caption">
-            <strong>Empo Themes</strong>
-            <span>Chrome And iOS Themes</span>
-          </div>
-        </article>
-
-      </div>
-    </section>
-
-    <!-- Hosting Contact -->
-    <section class="hosting-cta reveal">
-      <div>
-        <h2>Want your website hosted? Or Something Else?</h2>
-        <p>Send me an email.</p>
-      </div>
-
-      <a
-        class="mail-button"
-        href="mailto:Empo@empo.cc?subject=Website%20hosting%20request&body=Hi%20Empo%2C%0A%0AI%27m%20interested%20in%20getting%20my%20website%20hosted.%0A%0AWebsite%20URL%20or%20project%3A%20%0A%0AThanks!">
-        Email me ↗
-      </a>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-      <span>empo.cc</span>
-
-      <a href="#" class="termly-display-preferences">
-        Consent Preferences
+      <a class="site-card" href="https://caap.empo.cc/"
+         target="_blank" rel="noopener noreferrer">
+        <div class="image-wrap">
+          <img src="" alt="CAAP Website Preview" loading="lazy">
+          <span class="image-label">CAAP SUPERMARKET</span>
+        </div>
+        <div class="card-caption">
+          <strong>Caap Official Website</strong>
+          <span>Caap Website ↗</span>
+        </div>
       </a>
 
-      <span>
-        Built by Empo · © <span id="year"></span>
-      </span>
-    </footer>
+      <a class="site-card" href="/" target="_blank" rel="noopener noreferrer">
+        <div class="image-wrap">
+          <img src="" alt="Now Games Website Preview" loading="lazy">
+          <span class="image-label">COMING SOON</span>
+        </div>
+        <div class="card-caption">
+          <strong>Now Games</strong>
+          <span>Browser games ↗</span>
+        </div>
+      </a>
 
-  </main>
+    </div>
+  </section>
 
-  <!-- Secret iframe popup -->
-  <div
-    class="secret-overlay"
-    id="secret-overlay"
-    aria-hidden="true">
+  <!-- AD 2: Tall -->
+  <section class="ad-section" aria-label="Advertisement">
+    <span class="ad-label">Advertisement</span>
+    <div class="ad-slot ad-tall" id="ad-tall-1"></div>
+  </section>
 
-    <section
-      class="secret-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Secret page">
+  <!-- HOSTED SITES -->
+  <section class="site-section hosted-section reveal"
+           aria-labelledby="hosted-sites-title">
+    <h2 id="hosted-sites-title">Hosted Sites</h2>
+    <div class="site-grid hosted-grid">
 
-      <button
-        class="secret-close"
-        id="secret-close"
-        type="button"
-        aria-label="Close">×</button>
+      <a class="site-card" href="https://blackstar.host.empo.cc/"
+         target="_blank" rel="noopener noreferrer">
+        <div class="image-wrap">
+          <img
+            src="https://cdn.nest.rip/uploads/a8d4b76e-37b8-4f4b-bf8f-9c15b72f2d41.png"
+            alt="BlackStar Development Website Preview" loading="lazy">
+          <span class="image-label">HOSTED</span>
+        </div>
+        <div class="card-caption">
+          <strong>By BlackStar Development</strong>
+          <span>BlackStar Website ↗</span>
+        </div>
+      </a>
 
-      <iframe
-        class="secret-frame"
-        id="secret-frame"
-        src="/snakeeaster"
-        title="Secret page"
-        loading="lazy">
-      </iframe>
+    </div>
+  </section>
 
-    </section>
-  </div>
+  <!-- AD 3: Banner -->
+  <section class="ad-section" aria-label="Advertisement">
+    <span class="ad-label">Advertisement</span>
+    <div class="ad-slot ad-banner" id="ad-banner-2"></div>
+  </section>
 
-  <!-- Page scripts -->
-  <script>
-    // Current year
-    document.getElementById('year').textContent =
-      new Date().getFullYear();
+  <!-- ARCHIVED PROJECTS -->
+  <section class="site-section archived-section reveal"
+           aria-labelledby="archived-title">
+    <h2 id="archived-title">Archived Projects</h2>
+    <p class="section-description">
+      Older projects and experiments I've worked on.
+    </p>
 
-    // Reveal animations
-    const items = document.querySelectorAll('.reveal');
+    <div class="site-grid archived-grid">
 
-    if (
-      'IntersectionObserver' in window &&
-      !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    ) {
-      const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.08 });
+      <article class="site-card archived-card">
+        <div class="image-wrap">
+          <img
+            src="https://cdn.nest.rip/uploads/1d699230-03fa-43b2-8493-b85613bd0a9d.png"
+            alt="Empo Games Website Preview" loading="lazy">
+          <span class="image-label">ARCHIVED</span>
+        </div>
+        <div class="card-caption">
+          <strong>Empo Games</strong>
+          <span>Online Games Site</span>
+        </div>
+      </article>
 
-      items.forEach(item => observer.observe(item));
-    } else {
-      items.forEach(item => item.classList.add('visible'));
+      <article class="site-card archived-card">
+        <div class="image-wrap">
+          <img
+            src="https://cdn.nest.rip/uploads/5ea6b2b0-78ef-4b07-8964-b85d071d819a.png"
+            alt="Empo Themes Website Preview" loading="lazy">
+          <span class="image-label">ARCHIVED</span>
+        </div>
+        <div class="card-caption">
+          <strong>Empo Themes</strong>
+          <span>Chrome And iOS Themes</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- AD 4: Tall -->
+  <section class="ad-section" aria-label="Advertisement">
+    <span class="ad-label">Advertisement</span>
+    <div class="ad-slot ad-tall" id="ad-tall-2"></div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="hosting-cta reveal">
+    <div>
+      <h2>Want your website hosted? Or Something Else?</h2>
+      <p>Send me an email.</p>
+    </div>
+    <a class="mail-button"
+       href="mailto:Empo@empo.cc?subject=Website%20hosting%20request&body=Hi%20Empo%2C%0A%0AI%27m%20interested%20in%20getting%20my%20website%20hosted.%0A%0AWebsite%20URL%20or%20project%3A%20%0A%0AThanks!">
+      Email me ↗
+    </a>
+  </section>
+
+  <!-- AD 5: Banner -->
+  <section class="ad-section" aria-label="Advertisement">
+    <span class="ad-label">Advertisement</span>
+    <div class="ad-slot ad-banner" id="ad-banner-3"></div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>empo.cc</span>
+    <a href="#" class="termly-display-preferences">Consent Preferences</a>
+    <span>Built by Empo · © <span id="year"></span></span>
+  </footer>
+
+</main>
+
+<!-- SECRET EASTER EGG -->
+<div class="secret-overlay" id="secret-overlay" aria-hidden="true">
+  <section class="secret-modal" role="dialog"
+           aria-modal="true" aria-label="Secret page">
+    <button class="secret-close" id="secret-close"
+            type="button" aria-label="Close">×</button>
+    <iframe class="secret-frame" id="secret-frame"
+            src="/snakeeaster" title="Secret page" loading="lazy"></iframe>
+  </section>
+</div>
+
+<script>
+  // Footer year
+  document.getElementById('year').textContent =
+    new Date().getFullYear();
+
+  // Reveal animations
+  const items = document.querySelectorAll('.reveal');
+
+  if ('IntersectionObserver' in window &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    items.forEach(item => observer.observe(item));
+  } else {
+    items.forEach(item => item.classList.add('visible'));
+  }
+
+  // Snake easter egg
+  const secretTrigger = document.getElementById('empo-secret-trigger');
+  const secretOverlay = document.getElementById('secret-overlay');
+  const secretClose = document.getElementById('secret-close');
+  const secretFrame = document.getElementById('secret-frame');
+
+  const secretNames = [
+    'Empo.cc',
+    'Comming Soon: Nowgames',
+    'Empodev.xyz',
+    'i spend like 30€ On All My Domains!',
+    'SNAKEEE'
+  ];
+
+  let secretClickCount = 0;
+
+  secretTrigger.addEventListener('click', () => {
+    if (secretClickCount >= 5) return;
+
+    secretClickCount++;
+    secretTrigger.textContent = secretNames[secretClickCount - 1];
+
+    if (secretClickCount === 5) {
+      secretOverlay.classList.add('is-open');
+      secretOverlay.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('secret-modal-open');
+      secretClose.focus();
     }
+  });
 
-    // Snake Easter egg
-    const secretTrigger =
-      document.getElementById('empo-secret-trigger');
+  function closeSecretIframe() {
+    secretOverlay.classList.remove('is-open');
+    secretOverlay.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('secret-modal-open');
 
-    const secretOverlay =
-      document.getElementById('secret-overlay');
+    secretClickCount = 0;
+    secretTrigger.textContent = 'Empo';
+    secretFrame.src = '/snakeeaster';
+    secretTrigger.focus();
+  }
 
-    const secretClose =
-      document.getElementById('secret-close');
+  secretClose.addEventListener('click', closeSecretIframe);
 
-    const secretFrame =
-      document.getElementById('secret-frame');
+  secretOverlay.addEventListener('click', event => {
+    if (event.target === secretOverlay) closeSecretIframe();
+  });
 
-    const secretNames = [
-      'Empo.cc',
-      'Comming Soon: Nowgames',
-      'Empodev.xyz',
-      'i spend like 30€ On All My Domains!',
-      'SNAKEEE'
-    ];
-
-    let secretClickCount = 0;
-
-    secretTrigger.addEventListener('click', () => {
-      if (secretClickCount >= 5) return;
-
-      secretClickCount++;
-
-      secretTrigger.textContent =
-        secretNames[secretClickCount - 1];
-
-      if (secretClickCount === 5) {
-        secretOverlay.classList.add('is-open');
-        secretOverlay.setAttribute('aria-hidden', 'false');
-
-        document.body.classList.add('secret-modal-open');
-
-        secretClose.focus();
-      }
-    });
-
-    function closeSecretIframe() {
-      secretOverlay.classList.remove('is-open');
-      secretOverlay.setAttribute('aria-hidden', 'true');
-
-      document.body.classList.remove('secret-modal-open');
-
-      secretClickCount = 0;
-      secretTrigger.textContent = 'Empo';
-
-      secretFrame.src = '/snakeeaster';
-
-      secretTrigger.focus();
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' &&
+        secretOverlay.classList.contains('is-open')) {
+      closeSecretIframe();
     }
+  });
 
-    secretClose.addEventListener('click', closeSecretIframe);
+  // Ad placement visibility analytics.
+  // These are page-slot visibility events, NOT ad-network impressions or revenue.
+  if (typeof gtag === 'function' &&
+      'IntersectionObserver' in window) {
+    const adObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          gtag('event', 'ad_slot_visible', {
+            event_category: 'advertising',
+            ad_slot: entry.target.id,
+            ad_format: entry.target.classList.contains('ad-tall')
+              ? '160x300' : '468x60'
+          });
 
-    secretOverlay.addEventListener('click', event => {
-      if (event.target === secretOverlay) {
-        closeSecretIframe();
-      }
+          adObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.ad-slot').forEach(slot => {
+      adObserver.observe(slot);
     });
+  }
+</script>
 
-    document.addEventListener('keydown', event => {
-      if (
-        event.key === 'Escape' &&
-        secretOverlay.classList.contains('is-open')
-      ) {
-        closeSecretIframe();
-      }
-    });
-  </script>
+<!-- SKYKRAPE AD CONFIGURATION -->
+<script>
+  /*
+    The two supplied keys are used for five placements.
+    The loader serializes script requests to avoid changing atOptions
+    while a previous invocation is still loading.
 
-  <!-- Skykrape Ads -->
-  <script>
-    function loadSkykrapeAd(containerId, key, width, height) {
-      const container = document.getElementById(containerId);
+    Some ad providers require a separate placement key per ad unit.
+    If your provider does not support repeating these keys, obtain
+    additional approved ad-unit keys from its dashboard.
+  */
+  const skykrapeAds = [
+    {
+      id: 'ad-banner-1',
+      key: 'cd28dc56eccff9098eb7e4916a796161',
+      width: 468,
+      height: 60
+    },
+    {
+      id: 'ad-tall-1',
+      key: '222a26211a465cc0a7e51767d9abe7ac',
+      width: 160,
+      height: 300
+    },
+    {
+      id: 'ad-banner-2',
+      key: 'cd28dc56eccff9098eb7e4916a796161',
+      width: 468,
+      height: 60
+    },
+    {
+      id: 'ad-tall-2',
+      key: '222a26211a465cc0a7e51767d9abe7ac',
+      width: 160,
+      height: 300
+    },
+    {
+      id: 'ad-banner-3',
+      key: 'cd28dc56eccff9098eb7e4916a796161',
+      width: 468,
+      height: 60
+    }
+  ];
 
-      if (!container || container.dataset.loaded === 'true') {
+  function loadSkykrapeAdsSequentially() {
+    let index = 0;
+
+    function loadNext() {
+      if (index >= skykrapeAds.length) return;
+
+      const ad = skykrapeAds[index++];
+      const container = document.getElementById(ad.id);
+
+      if (!container) {
+        loadNext();
         return;
       }
 
-      container.dataset.loaded = 'true';
+      window.atOptions = {
+        key: ad.key,
+        format: 'iframe',
+        height: ad.height,
+        width: ad.width,
+        params: {}
+      };
 
-      // Configure this ad immediately before loading its script.
-      const configScript = document.createElement('script');
-
-      configScript.textContent =
-        'var atOptions = ' + JSON.stringify({
-          key: key,
-          format: 'iframe',
-          height: height,
-          width: width,
-          params: {}
-        }) + ';';
-
-      container.appendChild(configScript);
-
-      const adScript = document.createElement('script');
-
-      adScript.src =
+      const script = document.createElement('script');
+      script.src =
         'https://www.highrevenueformat.com/' +
-        encodeURIComponent(key) +
-        '/invoke.js';
+        ad.key + '/invoke.js';
+      script.async = false;
 
-      adScript.async = false;
+      script.onload = loadNext;
+      script.onerror = loadNext;
 
-      container.appendChild(adScript);
+      container.appendChild(script);
     }
 
-    window.addEventListener('load', () => {
-      loadSkykrapeAd(
-        'skykrape-banner',
-        'cd28dc56eccff9098eb7e4916a796161',
-        468,
-        60
-      );
+    loadNext();
+  }
 
-      loadSkykrapeAd(
-        'skykrape-tall',
-        '222a26211a465cc0a7e51767d9abe7ac',
-        160,
-        300
-      );
-    });
-  </script>
+  window.addEventListener('load', loadSkykrapeAdsSequentially);
+</script>
 
 </body>
 </html>
